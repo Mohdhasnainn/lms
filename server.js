@@ -13,10 +13,10 @@ dotenv.config();
 
 app.use("/api/auth/", userRoute);
 
-app.use(express.static("client/dist"));
+app.use(express.static("client/build"));
 
 app.use("/*", (req, res) => {
-  res.sendFile(path.join(path.resolve(), "client", "dist", "index.html"));
+  res.sendFile(path.join(path.resolve(), "client", "build", "index.html"));
 });
 
 const Connect = async () => {
