@@ -24,8 +24,6 @@ const Dashboard = () => {
     navigate("/");
   };
 
-
-  console.log(user);
   
   const items = [
     // {

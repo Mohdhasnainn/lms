@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
-const JWT_SECRET = "Thisisasecretkey";
 
 const verifyToken = (req, res, next) => {
   const token = req.header("token");
   if (token) {
-    jwt.verify(token, JWT_SECRET, (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
       if (err) res.status(403).json("Token is not valid!");
       req.user = user.user;
       next();
@@ -13,7 +12,6 @@ const verifyToken = (req, res, next) => {
     return res.status(401).json("You are not authenticated!");
   }
 };
-
 
 const verifyTokenAndAuthorization = (req, res, next) => {
   verifyToken(req, res, () => {
@@ -25,7 +23,6 @@ const verifyTokenAndAuthorization = (req, res, next) => {
   });
 };
 
-
 const verifyTokenAndAdmin = (req, res, next) => {
   verifyToken(req, res, () => {
     if (req.user.isAdmin) {
@@ -36,13 +33,17 @@ const verifyTokenAndAdmin = (req, res, next) => {
   });
 };
 
-function localVariables(req, res, next){
+function localVariables(req, res, next) {
   req.app.locals = {
-      OTP : null,
-      resetSession : false
-  }
-  next()
+    OTP: null,
+    resetSession: false,
+  };
+  next();
 }
 
-export { verifyToken, verifyTokenAndAdmin, localVariables, verifyTokenAndAuthorization };
-
+export {
+  verifyToken,
+  verifyTokenAndAdmin,
+  localVariables,
+  verifyTokenAndAuthorization,
+};

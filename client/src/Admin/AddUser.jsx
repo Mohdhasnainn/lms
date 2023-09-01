@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography } from "antd";
 import Cookies from "js-cookie";
 import axios from "axios";
@@ -9,31 +9,42 @@ const AddUser = () => {
   const [loading, setLoading] = useState(false);
 
   const HandleClick = async () => {
-    try {
-      setLoading(true);
-      await axios.post(
-        import.meta.env.VITE_URL + "/api/auth/register",
-        {
-          ...credential,
-          isAdmin: credential.role === "Admin" ? true : false,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            token: Cookies.get("token"),
+    if (credential.cpassword === credential.password) {
+      try {
+        setLoading(true);
+        await axios.post(
+          import.meta.env.VITE_URL + "/api/auth/register",
+          {
+            ...credential,
+            // classs: credential.class ? credential.class : "9 class",
+            isAdmin: credential.role === "Admin" ? true : false,
           },
-        }
-      );
-      alert('Succesfully created!')
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
+          {
+            headers: {
+              "Content-Type": "application/json",
+              token: Cookies.get("token"),
+            },
+          }
+        );
+        alert("Succesfully created!");
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      alert("Password does not match");
     }
   };
+
 
   const HandleChange = (e) => {
     setCredential((data) => ({ ...data, [e.target.id]: e.target.value }));
   };
+
+  useEffect(() => {
+    setCredential((data) => ({ ...data, role: "Admin" }));
+    setCredential((data) => ({ ...data, classs: "9 class" }));
+  }, []);
 
   return (
     <div>
@@ -66,6 +77,14 @@ const AddUser = () => {
           id="password"
           onChange={(e) => HandleChange(e)}
         />
+        <label className="mt-2">Confirm Password</label>
+        <input
+          type="password"
+          placeholder="Confirm Password"
+          className="form-control mt-1"
+          id="cpassword"
+          onChange={(e) => HandleChange(e)}
+        />
         <label className="mt-2">Phone</label>
         <input
           type="number"
@@ -84,6 +103,23 @@ const AddUser = () => {
           <option value={"Teacher"}>Teacher</option>
           <option value={"Student"}>Student</option>
         </select>
+
+        {credential.role !== "Admin" && (
+          <>
+            {" "}
+            <label className="mt-2">Class</label>
+            <select
+              className="form-control mt-1"
+              id="classs"
+              onChange={(e) => HandleChange(e)}
+            >
+              <option value={"9 class"}>9 class</option>
+              <option value={"10 class"}>10 class</option>
+              <option value={"Both"}>Both</option>
+            </select>
+          </>
+        )}
+
         <button className="btn btn-primary mt-3" onClick={HandleClick}>
           {loading ? "Loading" : "Create"}
         </button>

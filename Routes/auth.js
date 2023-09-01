@@ -2,12 +2,13 @@ import express from "express";
 import User from "../Models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { verifyTokenAndAdmin } from "../Middlewares/verifyUser.js";
 
 const router = express.Router();
 
 // Register
-router.post("/register", async (req, res) => {
-  const { email, password, name, phone, isAdmin, role } = req.body;
+router.post("/register", verifyTokenAndAdmin, async (req, res) => {
+  const { email, password, name, phone, isAdmin, role, classs } = req.body;
 
   try {
     const exist = await User.findOne({ email });
@@ -29,6 +30,7 @@ router.post("/register", async (req, res) => {
         uid: "ES" + (Number(10000) + Number(users.length + 1)),
         isAdmin,
         role,
+        classs
       });
 
       success = true;
@@ -69,10 +71,46 @@ router.post("/login", async (req, res) => {
   res.json({ success, msg: "Successfull!", authToken });
 });
 
-router.get("/users", async (req, res) => {
-  const getUsers = await User.find({isAdmin: false});
+router.get("/users", verifyTokenAndAdmin, async (req, res) => {
+  const getUsers = await User.find({ isAdmin: false });
 
   res.json({ users: getUsers });
+});
+
+router.put("/active", verifyTokenAndAdmin, async (req, res) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    req.body.id,
+    {
+      disabled: false,
+    },
+    { new: true }
+  );
+
+  if (updatedUser) {
+    const users = await User.find({ isAdmin: false });
+    res.json({
+      msg: "Deleted Successfully!",
+      data: users,
+    });
+  }
+});
+
+router.put("/disable", verifyTokenAndAdmin, async (req, res) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    req.body.id,
+    {
+      disabled: true,
+    },
+    { new: true }
+  );
+
+  if (updatedUser) {
+    const users = await User.find({ isAdmin: false });
+    res.json({
+      msg: "Deleted Successfully!",
+      data: users,
+    });
+  }
 });
 
 export default router;

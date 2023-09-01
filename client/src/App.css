@@ -8,6 +8,23 @@
 }
 
 
+.blue{
+  background: rgb(1, 75, 233);
+}
+
+.cards .card{
+  width: 33%;
+}
+
+.dblue{
+  background: rgb(2, 2, 109);
+}
+
+
+.orange{
+  background: rgb(255, 115, 0);
+}
+
 a{
   text-decoration: none;
 }
