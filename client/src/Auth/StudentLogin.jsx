@@ -25,7 +25,7 @@ const StudentLogin = () => {
 
     const token = jwt_decode(data.authToken);
 
-    if (!token.user.isAdmin && token.user.role === "Student") {
+    if (!token.user.isAdmin && token.user.role === "Student" &&  !token.user.disabled) {
       Cookies.set("token", data.authToken, { expires: 1, secure: true });
       setUser(token?.user)
       navigate("/");

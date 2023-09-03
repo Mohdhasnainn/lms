@@ -8,6 +8,7 @@ import Routess from "./Routess";
 import { FiSettings } from "react-icons/fi";
 import { HiUsers } from "react-icons/hi";
 import { AiFillPlusCircle } from "react-icons/ai";
+import {FaBookMedical} from "react-icons/fa";
 
 const { Header, Sider, Content } = Layout;
 
@@ -103,7 +104,7 @@ const Dashboard = () => {
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={["/"]}
+            defaultSelectedKeys={`/${[window.location.href.split("/")[3]]}`}
             onClick={(item) => {
               navigate(item.key);
             }}
@@ -122,6 +123,11 @@ const Dashboard = () => {
                 key: "/",
                 icon: <HiUsers size={25} color="white" />,
                 label: "Welcome",
+              },
+              user?.role === "Teacher" && {
+                key: "/addqno",
+                icon: <FaBookMedical size={22} color="white" />,
+                label: "Add Questions",
               },
             ]}
           />

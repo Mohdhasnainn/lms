@@ -5,10 +5,13 @@ import jwt_decode from "jwt-decode";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useAuthContext } from "../Contexts/AuthContext";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
+import { useAlert } from "react-alert";
 
 const TeacherLogin = () => {
-  const {setUser} = useAuthContext();
+  const alert = useAlert();
+  const navigate = useNavigate();
+  const { setUser, user } = useAuthContext();
   const [credential, setCredential] = useState({});
 
   const handleSubmit = async (e) => {
@@ -24,17 +27,22 @@ const TeacherLogin = () => {
 
     const token = jwt_decode(data.authToken);
 
-    if (!token.user.isAdmin && token.user.role === "Teacher") {
+    if (
+      !token.user.isAdmin &&
+      token.user.role === "Teacher" &&
+      !token.user.disabled
+    ) {
       Cookies.set("token", data.authToken, { expires: 1, secure: true });
-      setUser(token?.user)
+      setUser(token?.user);
       navigate("/");
     } else {
-      alert("Incorrect credentials!");
+      alert.show(<span className="small">Incorrect credentials!</span>, {
+        type: "error",
+      });
     }
-    
   };
 
-  if(user) return <Navigate to={"/"} />
+  if (user) return <Navigate to={"/"} />;
 
   return (
     <div className="login_bg">
@@ -49,10 +57,12 @@ const TeacherLogin = () => {
               placeholder="Enter your email"
               className="mt-1"
               required
-              onChange={(e)=> setCredential((data) => ({
-                ...data,
-                email: e.target.value,
-              }))}
+              onChange={(e) =>
+                setCredential((data) => ({
+                  ...data,
+                  email: e.target.value,
+                }))
+              }
             />
           </div>
           <div className="mt-2">
@@ -62,13 +72,18 @@ const TeacherLogin = () => {
               placeholder="Enter your password"
               className="mt-1"
               required
-              onChange={(e)=> setCredential((data) => ({
-                ...data,
-                password: e.target.value,
-              }))}
+              onChange={(e) =>
+                setCredential((data) => ({
+                  ...data,
+                  password: e.target.value,
+                }))
+              }
             />
           </div>
-          <button className="btn btn-primary mt-3 text-white px-3" type="submit">
+          <button
+            className="btn btn-primary mt-3 text-white px-3"
+            type="submit"
+          >
             Login
           </button>
         </form>

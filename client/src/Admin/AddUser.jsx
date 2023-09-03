@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Typography } from "antd";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useAlert } from "react-alert";
 
 const AddUser = () => {
+  const alert = useAlert();
   const [credential, setCredential] = useState({});
   const { Title } = Typography;
   const [loading, setLoading] = useState(false);
@@ -26,16 +28,20 @@ const AddUser = () => {
             },
           }
         );
-        alert("Succesfully created!");
+        alert.show(<span className="small">Succesfully created!</span>, {
+          type: "success",
+        });
+
         setLoading(false);
       } catch (err) {
         console.log(err);
       }
     } else {
-      alert("Password does not match");
+      alert.show(<span className="small">Password does not match</span>, {
+        type: "error",
+      });
     }
   };
-
 
   const HandleChange = (e) => {
     setCredential((data) => ({ ...data, [e.target.id]: e.target.value }));
@@ -44,6 +50,7 @@ const AddUser = () => {
   useEffect(() => {
     setCredential((data) => ({ ...data, role: "Admin" }));
     setCredential((data) => ({ ...data, classs: "9 class" }));
+    setCredential((data) => ({ ...data, subject: "Maths" }));
   }, []);
 
   return (
@@ -116,6 +123,26 @@ const AddUser = () => {
               <option value={"9 class"}>9 class</option>
               <option value={"10 class"}>10 class</option>
               <option value={"Both"}>Both</option>
+            </select>
+          </>
+        )}
+
+        {credential.role === "Teacher" && (
+          <>
+            {" "}
+            <label className="mt-2">Subject</label>
+            <select
+              className="form-control mt-1"
+              id="subject"
+              onChange={(e) => HandleChange(e)}
+            >
+              <option value={"Maths"}>Maths</option>
+              <option value={"Physics"}>Physics</option>
+              <option value={"Chemistry"}>Chemistry</option>
+              <option value={"Computer"}>Computer</option>
+              <option value={"PST"}>PST</option>
+              <option value={"Islamiat"}>Islamiat</option>
+              <option value={"Urdu"}>Urdu</option>
             </select>
           </>
         )}

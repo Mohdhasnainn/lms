@@ -7,6 +7,11 @@
   font-family: "Poppins", sans-serif !important;
 }
 
+:root{
+  --primary-color: #1677ff;
+}
+
+
 
 .blue{
   background: rgb(1, 75, 233);
@@ -39,6 +44,13 @@ p,h1,h2,h3,h4,h5,h6{
 
 .bg-gray {
   background-color: #f2f6f8;
+}
+
+
+
+.class_card:hover{
+  background: var(--primary-color);
+  color: white;
 }
 
 /* Sidebar responsive */

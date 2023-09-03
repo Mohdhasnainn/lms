@@ -3,12 +3,13 @@ import User from "../Models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { verifyTokenAndAdmin } from "../Middlewares/verifyUser.js";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
 // Register
 router.post("/register", verifyTokenAndAdmin, async (req, res) => {
-  const { email, password, name, phone, isAdmin, role, classs } = req.body;
+  const { email, password, name, phone, isAdmin, role, classs, subject } = req.body;
 
   try {
     const exist = await User.findOne({ email });
@@ -30,7 +31,7 @@ router.post("/register", verifyTokenAndAdmin, async (req, res) => {
         uid: "ES" + (Number(10000) + Number(users.length + 1)),
         isAdmin,
         role,
-        classs
+        classs,
       });
 
       success = true;
@@ -62,6 +63,9 @@ router.post("/login", async (req, res) => {
       isAdmin: user.isAdmin,
       role: user.role,
       name: user.name,
+      disabled: user.disabled,
+      classs: user.classs,
+      subject: user.subject
     },
   };
 
@@ -111,6 +115,20 @@ router.put("/disable", verifyTokenAndAdmin, async (req, res) => {
       data: users,
     });
   }
+});
+
+router.put("/update/:id", verifyTokenAndAdmin, async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.params.id.trim(),
+    {
+      ...req.body,
+    },
+    { new: true }
+  );
+
+  res.json({
+    msg: "Updated Successfully!",
+  });
 });
 
 export default router;

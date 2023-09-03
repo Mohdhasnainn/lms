@@ -21,6 +21,11 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  subject: {
+    type: String,
+    required: false,
+    default: ""
+  },
   uid: {
     type: String,
     required: true,
