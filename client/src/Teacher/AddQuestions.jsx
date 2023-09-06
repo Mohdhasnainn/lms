@@ -3,8 +3,8 @@ import { useAuthContext } from "../Contexts/AuthContext";
 import { Navigate } from "react-router";
 import axios from "axios";
 import Cookies from "js-cookie";
-import {GrSelect} from "react-icons/gr";
-import {AiFillQuestionCircle, AiOutlineQuestionCircle} from "react-icons/ai"
+import { GrSelect } from "react-icons/gr";
+import { AiFillQuestionCircle, AiOutlineQuestionCircle } from "react-icons/ai";
 
 const AddQuestions = () => {
   const { user } = useAuthContext();
@@ -37,12 +37,12 @@ const AddQuestions = () => {
     setSLoading(false);
   };
 
-  console.log(user.subject);
+  console.log(chapters);
 
   if (!user || user.role !== "Teacher") return <Navigate to={"/"} />;
 
   return (
-    <div>
+    <div className="QnoSection">
       {user.classs === "Both" && slide === 0 && (
         <div>
           <h2 className="fw-bold text-center">Please Choose class</h2>
@@ -90,11 +90,16 @@ const AddQuestions = () => {
                     className="d-flex justify-content-between align-items-center chapter px-3 py-2 bg-gray fs-5 rounded mt-2"
                     key={elem}
                   >
-                    Chapter {i+ 1} : {elem}
+                    Chapter {i + 1} : {elem}
                     <div className="ms-3">
-                      <GrSelect size={23} className="me-2"/>
-                      <AiOutlineQuestionCircle size={24} className="me-2"/>
-                      <AiFillQuestionCircle size={24} className="me-2"/>
+                      <GrSelect
+                        size={23}
+                        className="me-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#exampleModal"
+                      />
+                      <AiOutlineQuestionCircle size={24} className="me-2" />
+                      <AiFillQuestionCircle size={24} className="me-2" />
                     </div>
                   </div>
                 );
@@ -103,6 +108,84 @@ const AddQuestions = () => {
           </div>
         </div>
       )}
+
+      <div
+        className="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog mt-5">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="exampleModalLabel">
+                Add MCQ's
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <label className="fw-bold fs-5">Question:</label>
+              <input className="form-control mt-1" type="text" />
+              <div className="d-flex mt-3">
+                <input className="mt-1" type="radio" 
+                name="option" />
+                <input
+                  type="text"
+                  contentEditable={true}
+                  className="py-1 form-control ms-3"
+                  placeholder="Option 1"
+                />
+              </div>
+              <div className="d-flex mt-3">
+                <input className="mt-1" type="radio" name="option" />
+                <input
+                  type="text"
+                  contentEditable={true}
+                  className="py-1 form-control ms-3"
+                  placeholder="Option 2"
+                />
+              </div>
+              <div className="d-flex mt-2">
+                <input className="mt-1" type="radio" 
+                name="option" />
+                <input
+                  type="text"
+                  contentEditable={true}
+                  className="py-1 form-control ms-3"
+                  placeholder="Option 3"
+                />
+              </div>
+              <div className="d-flex mt-2">
+                <input className="mt-1" type="radio" name="option" />
+                <input
+                  type="text"
+                  contentEditable={true}
+                  className="py-1 form-control ms-3"
+                  placeholder="Option 4"
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="button" className="btn btn-primary">
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
