@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import userRoute from "./Routes/auth.js";
 import dotenv from "dotenv";
 import path from "path";
+import bank from "./Routes/bank.js";
 
 // app
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors());
 dotenv.config();
 
 app.use("/api/auth/", userRoute);
+app.use("/api/bank/", bank);
 
 app.use(express.static("client/build"));
 
@@ -31,18 +33,6 @@ const Connect = async () => {
     throw err;
   }
 };
-
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.join(__dirname, "/client/dist")));
-
-//   app.get("*", (req, res) =>
-//     res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"))
-//   );
-// } else {
-//   app.get("/", (req, res) => {
-//     res.send("API is running....");
-//   });
-// }
 
 const PORT = process.env.PORT || 8500;
 
