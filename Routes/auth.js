@@ -81,6 +81,14 @@ router.get("/users", verifyTokenAndAdmin, async (req, res) => {
   res.json({ users: getUsers });
 });
 
+
+router.get("/user", verifyTokenAndAdmin, async (req, res) => {
+  const getUser = await User.findById(req.params.id);
+
+  res.json({ users: getUser });
+});
+
+
 router.put("/active", verifyTokenAndAdmin, async (req, res) => {
   const updatedUser = await User.findByIdAndUpdate(
     req.body.id,

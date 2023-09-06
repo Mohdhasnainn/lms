@@ -12,7 +12,8 @@ const questionSchema = new mongoose.Schema({
 const subjectSchema = new mongoose.Schema({
   name: String,
   chapters: Array,
-  class: String
+  class: String,
+  subject: String
 });
 
 // Create models based on the schemas
