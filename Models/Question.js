@@ -3,9 +3,13 @@ import mongoose from "mongoose";
 
 // Define a schema for questions
 const questionSchema = new mongoose.Schema({
-  question_text: String,
+  qno: String,
   options: [String],
   correct_answer: String,
+  type: String,
+  class: String,
+  subject: String,
+  chapter: String,
 });
 
 // Define a schema for subjects
@@ -13,7 +17,7 @@ const subjectSchema = new mongoose.Schema({
   name: String,
   chapters: Array,
   class: String,
-  subject: String
+  subject: String,
 });
 
 // Create models based on the schemas

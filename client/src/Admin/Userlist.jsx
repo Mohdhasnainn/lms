@@ -176,7 +176,7 @@ const UserList = () => {
     try {
       setLoading2(true);
       await axios.put(
-        import.meta.env.VITE_URL + `/api/auth/update/${user._id}`,
+        import.meta.env.VITE_URL + `/api/auth/update/${user.id}`,
         {
           ...credential,
           isAdmin: credential.role === "Admin" ? true : false,

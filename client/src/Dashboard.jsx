@@ -1,19 +1,19 @@
 import { MenuOutlined } from "@ant-design/icons";
-import { Dropdown, Layout, Menu, theme } from "antd";
+import { Dropdown, Layout, Menu } from "antd";
 import Cookies from "js-cookie";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "./Contexts/AuthContext";
 import Routess from "./Routess";
 import { FiSettings } from "react-icons/fi";
 import { HiUsers } from "react-icons/hi";
-import { AiFillPlusCircle } from "react-icons/ai";
-import {FaBookMedical} from "react-icons/fa";
+import { AiFillBank, AiFillPlusCircle } from "react-icons/ai";
+import { FaBookMedical } from "react-icons/fa";
 
 const { Header, Sider, Content } = Layout;
 
 const Dashboard = () => {
-  const { user, setUser } = useAuthContext();
+  const { user, setUser, userdata, setUserdata } = useAuthContext();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(
     window.matchMedia("(max-width: 550px)").matches ? true : false
@@ -22,27 +22,11 @@ const Dashboard = () => {
   const Logout = () => {
     Cookies.remove("token");
     setUser(null);
+    setUserdata(null);
     navigate("/");
   };
 
-  
   const items = [
-    // {
-    //   key: "1",
-    //   label: (
-    //     <Link to={"/profile"} style={{ fontSize: "1.05rem" }}>
-    //       Profile Settings
-    //     </Link>
-    //   ),
-    // },
-    // {
-    //   key: "2",
-    //   label: (
-    //     <Link to={"/change_password"} style={{ fontSize: "1.05rem" }}>
-    //       Change Password
-    //     </Link>
-    //   ),
-    // },
     {
       key: "3",
       label: (
@@ -69,7 +53,7 @@ const Dashboard = () => {
             style: { fontSize: "1.4rem", marginLeft: "10px", color: "#fff" },
             onClick: () => setCollapsed(!collapsed),
           })}
-          <p className="text-white ms-3">{user?.role}</p>
+          <p className="text-white ms-3">{userdata?.role}</p>
         </div>
 
         <div className="d-flex align-items-center ms-auto">
@@ -119,15 +103,20 @@ const Dashboard = () => {
                 icon: <AiFillPlusCircle size={25} color="white" />,
                 label: "Add User",
               },
-              user?.role === "Teacher" && {
+              userdata?.role === "Teacher" && {
                 key: "/",
                 icon: <HiUsers size={25} color="white" />,
                 label: "Welcome",
               },
-              user?.role === "Teacher" && {
+              userdata?.role === "Teacher" && {
                 key: "/addqno",
                 icon: <FaBookMedical size={22} color="white" />,
                 label: "Add Questions",
+              },
+              (userdata?.role === "Teacher" || userdata?.role === "Admin") && {
+                key: "/qnobank",
+                icon: <AiFillBank size={22} color="white" />,
+                label: "Questions Bank",
               },
             ]}
           />

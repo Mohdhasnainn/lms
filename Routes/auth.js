@@ -2,7 +2,7 @@ import express from "express";
 import User from "../Models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { verifyTokenAndAdmin } from "../Middlewares/verifyUser.js";
+import { verifyToken, verifyTokenAndAdmin } from "../Middlewares/verifyUser.js";
 import mongoose from "mongoose";
 
 const router = express.Router();
@@ -64,8 +64,8 @@ router.post("/login", async (req, res) => {
       role: user.role,
       name: user.name,
       disabled: user.disabled,
-      classs: user.classs,
-      subject: user.subject
+      // classs: user.classs,
+      // subject: user.subject
     },
   };
 
@@ -76,14 +76,14 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/users", verifyTokenAndAdmin, async (req, res) => {
-  const getUsers = await User.find({ isAdmin: false });
+  const getUsers = await User.find({ isAdmin: false }).select("-password");
 
   res.json({ users: getUsers });
 });
 
 
-router.get("/user", verifyTokenAndAdmin, async (req, res) => {
-  const getUser = await User.findById(req.params.id);
+router.get("/user", verifyToken, async (req, res) => {
+  const getUser = await User.findById(req.query.id).select("-password");
 
   res.json({ users: getUser });
 });

@@ -4,15 +4,16 @@ import { Routes, Route } from "react-router-dom";
 import Userlist from "./Admin/Userlist";
 import AddUser from "./Admin/AddUser";
 import AddQuestions from "./Teacher/AddQuestions";
+import Bank from "./Bank/Bank";
 
 const Routess = () => {
-  const { user } = useAuthContext();
+  const { userdata , user} = useAuthContext();
 
   return (
     <Routes>
-      {user?.isAdmin && <Route path="/" element={<Userlist />} />}
-      {user?.isAdmin && <Route path="/add" element={<AddUser />} />}
-      {user?.role === "Teacher" && (
+      {userdata?.isAdmin && <Route path="/" element={<Userlist />} />}
+      {userdata?.isAdmin && <Route path="/add" element={<AddUser />} />}
+      {userdata?.role === "Teacher" && (
         <Route
           path="/"
           element={
@@ -23,10 +24,13 @@ const Routess = () => {
         />
       )}
 
-      {user?.role === "Teacher" && (
+      {userdata?.role === "Teacher" && (
         <Route path="/addqno" element={<AddQuestions />} />
       )}
-      {user?.role === "Student" && (
+      {(userdata?.role === "Teacher" || user.role === "Admin") && (
+        <Route path="/qnobank" element={<Bank />} />
+      )}
+      {userdata?.role === "Student" && (
         <Route
           path="/"
           element={
