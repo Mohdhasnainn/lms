@@ -164,28 +164,28 @@ const Bank = () => {
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded mt-2"
                 type="button"
                 onClick={(e) => {
-                  FETCH("9", e.target.innerHTML);
+                  FETCH("10", e.target.innerHTML);
                   setSlide(1);
                 }}
               >
                 English
               </p>
-              <p
+              {/* <p
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
                 type="button"
                 onClick={(e) => {
-                  FETCH("9", e.target.innerHTML);
+                  FETCH("10", e.target.innerHTML);
                   setSlide(1);
                 }}
               >
                 Urdu
-              </p>
+              </p> */}
               <p
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
                 type="button"
                 onClick={(e) => {
-                  FETCH("9", e.target.innerHTML);
-                  setSlide(1);
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(10);
                 }}
               >
                 Maths
@@ -194,7 +194,7 @@ const Bank = () => {
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
                 type="button"
                 onClick={(e) => {
-                  FETCH("9", e.target.innerHTML);
+                  FETCH("10", e.target.innerHTML);
                   setSlide(1);
                 }}
               >
@@ -204,27 +204,7 @@ const Bank = () => {
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
                 type="button"
                 onClick={(e) => {
-                  FETCH("9", e.target.innerHTML);
-                  setSlide(1);
-                }}
-              >
-                Chemistry
-              </p>
-              <p
-                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
-                type="button"
-                onClick={(e) => {
-                  FETCH("9", e.target.innerHTML);
-                  setSlide(1);
-                }}
-              >
-                Biology
-              </p>
-              <p
-                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
-                type="button"
-                onClick={(e) => {
-                  FETCH("9", e.target.innerHTML);
+                  FETCH("10", e.target.innerHTML);
                   setSlide(1);
                 }}
               >
@@ -234,17 +214,37 @@ const Bank = () => {
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
                 type="button"
                 onClick={(e) => {
-                  FETCH("9", e.target.innerHTML);
+                  FETCH("10", e.target.innerHTML);
                   setSlide(1);
                 }}
               >
-                PST
+                Chemistry
               </p>
               <p
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
                 type="button"
                 onClick={(e) => {
-                  FETCH("9", e.target.innerHTML);
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                Biology
+              </p>
+              {/* <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                PST
+              </p> */}
+              <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
                   setSlide(1);
                 }}
               >
@@ -252,7 +252,105 @@ const Bank = () => {
               </p>
             </div>
           ) : (
-            <div></div>
+            <div className="px-5">
+              <GiFastBackwardButton
+                size={25}
+                className="back"
+                cursor={"pointer"}
+                onClick={() => setSlide(0)}
+              />
+              <h1 className="text-center fw-bold">Class 10 Subjects</h1>
+              <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded mt-2"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                English
+              </p>
+              {/* <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                Urdu
+              </p> */}
+              <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                Maths
+              </p>
+              <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                Physics
+              </p>
+              <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                Chemistry
+              </p>
+              <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                Biology
+              </p>
+              <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                Computer
+              </p>
+              {/* <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("9", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                PST
+              </p> */}
+              <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                Islamiat
+              </p>
+            </div>
           )}
         </>
       )}

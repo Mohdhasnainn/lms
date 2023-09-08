@@ -172,11 +172,12 @@ const UserList = () => {
     setCredential((data) => ({ ...data, [e.target.id]: e.target.value }));
   };
 
+
   const UpdateUser = async (user) => {
     try {
       setLoading2(true);
       await axios.put(
-        import.meta.env.VITE_URL + `/api/auth/update/${user.id}`,
+        import.meta.env.VITE_URL + `/api/auth/update/${user._id}`,
         {
           ...credential,
           isAdmin: credential.role === "Admin" ? true : false,
