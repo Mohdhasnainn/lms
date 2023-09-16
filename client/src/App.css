@@ -11,8 +11,6 @@
   --primary-color: #1677ff;
 }
 
-
-
 .blue{
   background: rgb(1, 75, 233);
 }
@@ -55,6 +53,24 @@ p,h1,h2,h3,h4,h5,h6{
 .class_card:hover{
   background: var(--primary-color);
   color: white;
+}
+
+
+.large-checkbox {
+  -webkit-appearance: none; /* Remove default styles on WebKit browsers */
+  -moz-appearance: none; /* Remove default styles on Mozilla browsers */
+  appearance: none; /* Remove default styles on other browsers */
+  width: 25px; /* Set the width to your desired size */
+  height: 25px; /* Set the height to your desired size */
+  border: 1.99px solid #000; /* Add a border for better visibility */
+  border-radius: 50%; /* Round the corners for a checkbox-like appearance */
+  cursor: pointer;
+}
+
+/* Style the checkbox when checked */
+.large-checkbox:checked {
+  background-color: #007bff; /* Change the background color when checked */
+  border-color: #007bff; /* Change the border color when checked */
 }
 
 /* Sidebar responsive */

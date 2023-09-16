@@ -3,6 +3,7 @@ import { useAuthContext } from "../Contexts/AuthContext";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { GiFastBackwardButton } from "react-icons/gi";
+import jsPDF from "jspdf";
 
 const Bank = () => {
   const { userdata, user } = useAuthContext();
@@ -14,6 +15,7 @@ const Bank = () => {
   const [sloading, setSLoading] = useState(false);
   const [tab, setTab] = useState("mcq");
   const [subject, setsubject] = useState(userdata.subject);
+  const [Mcq, setMCQs] = useState([]);
 
   const FETCH = async (cls, subj) => {
     setSLoading(true);
@@ -75,6 +77,294 @@ const Bank = () => {
     setSubdata(data);
   };
 
+  const AddQno = async (qno, e) => {
+    if (tab === "mcq") {
+      if (e.target.checked) {
+        setMCQs((prevDataArray) => [
+          ...prevDataArray,
+          { qno: qno.qno, options: qno.options, id: qno._id },
+        ]);
+      } else {
+        const filtered = Mcq.filter((elem) => {
+          return elem.id !== qno._id;
+        });
+        setMCQs(filtered);
+      }
+    } else if (tab === "short") {
+    }
+  };
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    let yOffset = 135;
+    const columnWidth = doc.internal.pageSize.width / 2 - 20; // Divide the page into two columns
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const centerX =
+      (pageWidth -
+        doc.getTextWidth(
+          "Important Note: This paper is a property of private coaching center"
+        ) /
+          2) /
+      2;
+
+    doc.setFontSize(10); // Reset the font size
+    doc.setLineWidth(0.2);
+
+    doc.setFont("times", "normal");
+
+    doc.text(
+      centerX,
+      10,
+      `Important Note: This paper is a property of private coaching center`
+    );
+
+    const startX = centerX;
+    const endX =
+      startX +
+      doc.getTextWidth(
+        "Important Note: This paper is a property of private coaching center"
+      );
+    const lineY = 10 + 2;
+
+    doc.line(startX, lineY, endX, lineY);
+
+    // Text 2
+    doc.setFontSize(14); // Reset the font size
+    const CenterX2 =
+      (pageWidth - doc.getTextWidth("BOARD OF SECONDARY EDUCATION KARACHI")) /
+      2;
+
+    doc.setFont("times", "bold");
+
+    doc.text(
+      CenterX2 + Math.abs(CenterX2 - centerX) / 2,
+      18,
+      `BOARD OF SECONDARY EDUCATION KARACHI`
+    );
+
+    const startX2 = CenterX2 + Math.abs(CenterX2 - centerX) / 2;
+    const endX2 =
+      startX2 + doc.getTextWidth("BOARD OF SECONDARY EDUCATION KARACHI");
+    const lineY2 = 18 + 2;
+
+    doc.line(startX2, lineY2, endX2, lineY2);
+
+    // Text 3
+
+    const CenterX3 =
+      (pageWidth - doc.getTextWidth(`MODULE I-${new Date().getFullYear()}`)) /
+      2;
+
+    doc.text(
+      CenterX3 + Math.abs(CenterX3 - centerX) / 2,
+      26,
+      `MODULE I-${new Date().getFullYear()}`
+    );
+
+    const startX3 = CenterX3 + Math.abs(CenterX3 - centerX) / 2;
+    const endX3 =
+      startX3 + doc.getTextWidth(`MODULE I-${new Date().getFullYear()}`);
+    const lineY3 = 26 + 2;
+
+    doc.line(startX3, lineY3, endX3, lineY3);
+
+    // Text 4
+    const CenterX4 =
+      (pageWidth - doc.getTextWidth(`${subject.toUpperCase()} (THEORY)`)) / 2;
+
+    doc.text(
+      CenterX4 + Math.abs(CenterX4 - CenterX3),
+      34,
+      `${subject.toUpperCase()} (THEORY)`
+    );
+
+    const startX4 = CenterX4 + Math.abs(CenterX4 - CenterX3);
+    const endX4 =
+      startX4 + doc.getTextWidth(`${subject.toUpperCase()} (THEORY)`);
+    const lineY4 = 34 + 2;
+
+    doc.line(startX4, lineY4, endX4, lineY4);
+
+    // Text 5
+    const CenterX5 =
+      (pageWidth -
+        doc.getTextWidth(
+          `${clas === "9 class" ? "(PAPER I Class-IX)" : "(PAPER II Class-X)"}`
+        )) /
+      2;
+
+    doc.text(
+      CenterX5 + Math.abs(CenterX5 - centerX) / 2,
+      42,
+      `${clas === "9 class" ? "(PAPER I Class-IX)" : "(PAPER II Class-X)"}`
+    );
+
+    const startX5 = CenterX5 + Math.abs(CenterX5 - centerX) / 2;
+    const endX5 =
+      startX5 +
+      doc.getTextWidth(
+        `${clas === "9 class" ? "(PAPER I Class-IX)" : "(PAPER II Class-X)"}`
+      );
+    const lineY5 = 42 + 2;
+
+    doc.line(startX5, lineY5, endX5, lineY5);
+
+    // Text 6
+    const CenterX6 =
+      (pageWidth - doc.getTextWidth(`(SCIENCE & GENERAL GROUP)`)) / 2;
+
+    doc.text(
+      CenterX6 + Math.abs(CenterX6 - CenterX5) / 2,
+      50,
+      `(SCIENCE & GENERAL GROUP)`
+    );
+
+    const startX6 = CenterX6 + Math.abs(CenterX6 - CenterX5) / 2;
+    const endX6 = startX6 + doc.getTextWidth(`(SCIENCE & GENERAL GROUP)`);
+    const lineY6 = 50 + 2;
+
+    doc.line(startX6, lineY6, endX6, lineY6);
+
+    // Text 7
+    doc.setFontSize(11); // Reset the font size
+
+    doc.text(12, 57, `General Instructions:`);
+
+    const endX7 = 12 + doc.getTextWidth(`General Instructions:`);
+    const lineY7 = 57 + 2;
+
+    doc.line(12, lineY7, endX7, lineY7);
+
+    doc.setFontSize(10); // Reset the font size
+    doc.setFont("times", "normal");
+
+    doc.text(
+      12,
+      63,
+      `Section ‘A’: It consists of ** Multiple choice questions (MCQs) and all of them are to be answered.`
+    );
+
+    doc.text(
+      12,
+      67,
+      `Section ‘B’: It comprises of ** short answer questions and all of them are to be answered.`
+    );
+
+    doc.text(
+      12,
+      71,
+      `Section ‘C’: It comprises of ** Descriptive answer questions and all of them are to be answered.`
+    );
+
+    // Text 8
+    doc.setFontSize(12); // Reset the font size
+    doc.setFont("Helvetica", "bold");
+    doc.text(10, 34, `Total time: 3 HRS`);
+    doc.text(170, 34, `Max. Marks:`);
+    doc.setFontSize(16); // Reset the font size
+    doc.text(175, 65, `Code “A”`);
+
+    // Text 8
+    const CenterX8 =
+      pageWidth -
+      doc.getTextWidth(
+        "SECTION ‘A’(COMPULSORY) MULTIPLE CHOICE QUESTIONS (M.C.QS)"
+      );
+
+    doc.setFont("times", "bold");
+    doc.setFontSize(14); // Reset the font size
+
+    doc.text(
+      CenterX8,
+      80,
+      `SECTION ‘A’(COMPULSORY) MULTIPLE CHOICE QUESTIONS (M.C.QS)`
+    );
+
+    const startX8 = CenterX8;
+    const endX8 =
+      startX8 +
+      doc.getTextWidth(
+        "SECTION ‘A’(COMPULSORY) MULTIPLE CHOICE QUESTIONS (M.C.QS)"
+      );
+    const lineY8 = 80 + 2;
+
+    doc.line(startX8, lineY8, endX8, lineY8);
+
+    doc.setFontSize(13); // Reset the font size
+
+    doc.text(10, 90, `Note:`);
+
+    const endX9 = 10 + doc.getTextWidth("Note");
+    const lineY9 = 90 + 2;
+
+    doc.line(10, lineY9, endX9, lineY9);
+
+    // MCQS
+    doc.setFont("times", "normal");
+    doc.setFontSize(12.5); // Reset the font size
+
+    doc.text(
+      10,
+      98,
+      `(i) Attempt all the questions of this Section.
+(ii) Do not copy down the part questions. Write only the answer against the proper number of 
+the question and its part according to the question paper.
+(iii) Each question carries 1 mark.
+(iv) Write the code of your question paper in bold letters in the beginning of the answer script.
+`
+    );
+
+    doc.text(
+      10,
+      125,
+      `1. Choose the correct answer for each question from the given options: - `
+    );
+
+    // doc.setFont("Helvetica", "normal");
+    Mcq.forEach((question, index) => {
+      doc.setFontSize(12.5); // Reset the font size
+      doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
+
+      let optionXOffset = 10;
+      let optionYOffset = yOffset + 6.4;
+
+      const optionLabels = ["a", "b", "c", "d"];
+
+      question.options.forEach((option, optionIndex) => {
+        doc.text(
+          optionXOffset,
+          optionYOffset,
+          `${optionLabels[optionIndex]}. ${option}`
+        );
+
+        if ((optionIndex + 1) % 2 === 0) {
+          optionYOffset += 6.4;
+          optionXOffset = 10;
+        } else {
+          optionXOffset += columnWidth + 10;
+        }
+      });
+
+      yOffset = optionYOffset + 2;
+    });
+
+    doc.save("question_paper.pdf");
+  };
+
+  useEffect(() => {
+    document.querySelectorAll(".select_mcq").forEach((e) => {
+      const exist = Mcq.filter((elem) => {
+        return elem.id === e.value && e.id;
+      });
+      if (exist.length > 0) {
+        document.getElementById(e.id).checked = true;
+      } else {
+        document.getElementById(e.id).checked = false;
+      }
+    });
+  }, [document.querySelectorAll(".select_mcq")]);
+
   useEffect(() => {
     if (userdata && userdata.classs !== "Both" && user.isAdmin !== true) {
       const cls = userdata?.classs.split(" ")[0];
@@ -86,6 +376,9 @@ const Bank = () => {
 
   return (
     <div>
+      <button onClick={generatePDF} className="d-block ms-auto btn btn-primary">
+        Download
+      </button>
       {slide === 0 && (
         <>
           {userdata.role === "Teacher" &&
@@ -387,7 +680,7 @@ const Bank = () => {
 
       {slide === 2 && (
         <div className="mt-3">
-           <GiFastBackwardButton
+          <GiFastBackwardButton
             size={25}
             className="back"
             cursor={"pointer"}
@@ -443,24 +736,36 @@ const Bank = () => {
             {subdata.length > 0
               ? subdata.map((elem, i) => {
                   return (
-                    <div key={elem.qno}>
-                      <p className="fs-5">
-                        <span className="fs-6 fw-bold"> {i + 1}.</span>{" "}
-                        {elem.qno}
-                      </p>
-                      <div className="d-flex justify-content-between flex-wrap w-100 align-items-center">
-                        {elem?.options &&
-                          elem.options.map((e, index) => {
-                            const sno = ["a", "b", "c", "d"];
-                            return (
-                              <p className="mt-1 fs-5 w-50" key={e}>
-                                <span className="fs-6 fw-bold text-muted">
-                                  {sno[index]}.
-                                </span>{" "}
-                                {e}
-                              </p>
-                            );
-                          })}
+                    <div
+                      key={elem.qno}
+                      className="d-flex align-items-start mt-3"
+                    >
+                      <input
+                        type="checkbox"
+                        className="large-checkbox me-3 mt-1 select_mcq"
+                        onChange={(e) => AddQno(elem, e)}
+                        id={`mcq${i + 1}`}
+                        value={elem._id}
+                      />
+                      <div style={{ width: "95%" }}>
+                        <p className="fs-5">
+                          <span className="fs-6 fw-bold"> {i + 1}.</span>{" "}
+                          {elem.qno}
+                        </p>
+                        <div className="d-flex justify-content-between flex-wrap w-100 align-items-center">
+                          {elem?.options &&
+                            elem.options.map((e, index) => {
+                              const sno = ["a", "b", "c", "d"];
+                              return (
+                                <p className="mt-1 fs-5 w-50" key={e}>
+                                  <span className="fs-6 fw-bold text-muted">
+                                    {sno[index]}.
+                                  </span>{" "}
+                                  {e}
+                                </p>
+                              );
+                            })}
+                        </div>
                       </div>
                     </div>
                   );
