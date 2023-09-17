@@ -16,6 +16,8 @@ const Bank = () => {
   const [tab, setTab] = useState("mcq");
   const [subject, setsubject] = useState(userdata.subject);
   const [Mcq, setMCQs] = useState([]);
+  const [shorts, setShorts] = useState([]);
+  const [longs, setLongs] = useState([]);
 
   const FETCH = async (cls, subj) => {
     setSLoading(true);
@@ -48,7 +50,6 @@ const Bank = () => {
       }
     );
     setSlide(2);
-    // console.log(data);
     const sdata = data.data.filter((elem) => {
       return elem.type === "mcq";
     });
@@ -91,6 +92,29 @@ const Bank = () => {
         setMCQs(filtered);
       }
     } else if (tab === "short") {
+      if (e.target.checked) {
+        setShorts((prevDataArray) => [
+          ...prevDataArray,
+          { qno: qno.qno, id: qno._id },
+        ]);
+      } else {
+        const filtered = shorts.filter((elem) => {
+          return elem.id !== qno._id;
+        });
+        setShorts(filtered);
+      }
+    } else if (tab === "long") {
+      if (e.target.checked) {
+        setLongs((prevDataArray) => [
+          ...prevDataArray,
+          { qno: qno.qno, id: qno._id },
+        ]);
+      } else {
+        const filtered = longs.filter((elem) => {
+          return elem.id !== qno._id;
+        });
+        setLongs(filtered);
+      }
     }
   };
 
@@ -352,6 +376,236 @@ the question and its part according to the question paper.
     doc.save("question_paper.pdf");
   };
 
+  const generatePDF2 = () => {
+    const doc = new jsPDF();
+    let yOffset = 105;
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const centerX =
+      (pageWidth -
+        doc.getTextWidth(
+          "Important Note: This paper is a property of private coaching center"
+        ) /
+          2) /
+      2;
+
+    doc.setFontSize(10); // Reset the font size
+    doc.setLineWidth(0.2);
+
+    doc.setFont("times", "normal");
+
+    doc.text(
+      centerX,
+      10,
+      `Important Note: This paper is a property of private coaching center`
+    );
+
+    const startX = centerX;
+    const endX =
+      startX +
+      doc.getTextWidth(
+        "Important Note: This paper is a property of private coaching center"
+      );
+    const lineY = 10 + 2;
+
+    doc.line(startX, lineY, endX, lineY);
+
+    // Text 2
+    doc.setFontSize(14); // Reset the font size
+    const CenterX2 =
+      (pageWidth - doc.getTextWidth("BOARD OF SECONDARY EDUCATION KARACHI")) /
+      2;
+
+    doc.setFont("times", "bold");
+
+    doc.text(
+      CenterX2 + Math.abs(CenterX2 - centerX) / 2,
+      18,
+      `BOARD OF SECONDARY EDUCATION KARACHI`
+    );
+
+    const startX2 = CenterX2 + Math.abs(CenterX2 - centerX) / 2;
+    const endX2 =
+      startX2 + doc.getTextWidth("BOARD OF SECONDARY EDUCATION KARACHI");
+    const lineY2 = 18 + 2;
+
+    doc.line(startX2, lineY2, endX2, lineY2);
+
+    // Text 3
+
+    const CenterX3 =
+      (pageWidth - doc.getTextWidth(`MODULE I-${new Date().getFullYear()}`)) /
+      2;
+
+    doc.text(
+      CenterX3 + Math.abs(CenterX3 - centerX) / 2,
+      26,
+      `MODULE I-${new Date().getFullYear()}`
+    );
+
+    const startX3 = CenterX3 + Math.abs(CenterX3 - centerX) / 2;
+    const endX3 =
+      startX3 + doc.getTextWidth(`MODULE I-${new Date().getFullYear()}`);
+    const lineY3 = 26 + 2;
+
+    doc.line(startX3, lineY3, endX3, lineY3);
+
+    // Text 4
+    const CenterX4 =
+      (pageWidth - doc.getTextWidth(`${subject.toUpperCase()} (THEORY)`)) / 2;
+
+    doc.text(
+      CenterX4 + Math.abs(CenterX4 - CenterX3),
+      34,
+      `${subject.toUpperCase()} (THEORY)`
+    );
+
+    const startX4 = CenterX4 + Math.abs(CenterX4 - CenterX3);
+    const endX4 =
+      startX4 + doc.getTextWidth(`${subject.toUpperCase()} (THEORY)`);
+    const lineY4 = 34 + 2;
+
+    doc.line(startX4, lineY4, endX4, lineY4);
+
+    // Text 5
+    const CenterX5 =
+      (pageWidth -
+        doc.getTextWidth(
+          `${clas === "9 class" ? "(PAPER I Class-IX)" : "(PAPER II Class-X)"}`
+        )) /
+      2;
+
+    doc.text(
+      CenterX5 + Math.abs(CenterX5 - centerX) / 2,
+      42,
+      `${clas === "9 class" ? "(PAPER I Class-IX)" : "(PAPER II Class-X)"}`
+    );
+
+    const startX5 = CenterX5 + Math.abs(CenterX5 - centerX) / 2;
+    const endX5 =
+      startX5 +
+      doc.getTextWidth(
+        `${clas === "9 class" ? "(PAPER I Class-IX)" : "(PAPER II Class-X)"}`
+      );
+    const lineY5 = 42 + 2;
+
+    doc.line(startX5, lineY5, endX5, lineY5);
+
+    // Text 6
+    const CenterX6 =
+      (pageWidth - doc.getTextWidth(`(SCIENCE & GENERAL GROUP)`)) / 2;
+
+    doc.text(
+      CenterX6 + Math.abs(CenterX6 - CenterX5) / 2,
+      50,
+      `(SCIENCE & GENERAL GROUP)`
+    );
+
+    const startX6 = CenterX6 + Math.abs(CenterX6 - CenterX5) / 2;
+    const endX6 = startX6 + doc.getTextWidth(`(SCIENCE & GENERAL GROUP)`);
+    const lineY6 = 50 + 2;
+
+    doc.line(startX6, lineY6, endX6, lineY6);
+
+    doc.text(10, 60, `Important Instructions:`);
+
+    const endX9 = 10 + doc.getTextWidth("Important Instructions:");
+    const lineY9 = 60 + 2;
+
+    doc.line(10, lineY9, endX9, lineY9);
+
+    // Text 7
+    const CenterX7 =
+      (pageWidth - doc.getTextWidth(`SECTION ‘B’ (SHORT ANSWER-QUESTIONS)`)) /
+      2;
+    doc.text(
+      CenterX7 + Math.abs(CenterX6 - CenterX7) / 2,
+      85,
+      `SECTION ‘B’ (SHORT ANSWER-QUESTIONS)`
+    );
+    const startX8 = CenterX7 + Math.abs(CenterX6 - CenterX7) / 2;
+    const endX8 =
+      startX8 + doc.getTextWidth("SECTION ‘B’ (SHORT ANSWER-QUESTIONS)");
+    const lineY8 = 85 + 2;
+
+    doc.line(startX8, lineY8, endX8, lineY8);
+
+    doc.text(175, 85, `(Marks: 40)`);
+
+    doc.setFontSize(13);
+    doc.text(10, 90, `Note:`);
+
+    const endX10 = 10 + doc.getTextWidth("Note:");
+    const lineY10 = 90 + 2;
+
+    doc.line(10, lineY10, endX10, lineY10);
+
+    doc.setFont("times", "normal");
+    doc.setFontSize(12.5);
+
+    doc.text(
+      10,
+      68,
+      `This paper consisting of Short-Answer Questions (Section ‘B’) and Descriptive-Answer Questions 
+(Section ‘C’) is being given after 30 minutes. Its total duration is 2 1/2  hours only.`
+    );
+
+    doc.text(
+      10,
+      98,
+      "Answer any 10 question from this section. Each question carries 4 marks."
+    );
+
+    shorts.forEach((question, index) => {
+      doc.setFontSize(12.5);
+      doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
+      yOffset = yOffset + 6.5;
+    });
+
+
+    doc.setFontSize(14);
+    doc.setFont("times", "bold");
+
+    yOffset = yOffset + 40;
+    const CenterXL =
+      (pageWidth - doc.getTextWidth(`SECTION ‘C’ (DETAILED ANSWER-QUESTIONS)`)) /
+      2;
+    doc.text(
+      CenterXL + Math.abs(CenterX7 - CenterXL) / 2,
+      yOffset - 15,
+      `SECTION ‘C’ (DETAILED ANSWER-QUESTIONS)`
+    );
+    const startXL = CenterXL + Math.abs(CenterX7 - CenterXL) / 2;
+    const endXL =
+      startXL + doc.getTextWidth("SECTION ‘C’ (DETAILED ANSWER-QUESTIONS)");
+    const lineYL = yOffset - 13;
+
+    doc.line(startXL, lineYL, endXL, lineYL);
+    
+    doc.text(175, yOffset - 15, `(Marks: 28)`);
+
+    doc.text(10, yOffset - 8, `Note:`);
+    
+    const endXL1 = 10 + doc.getTextWidth("Note");
+    const lineXL1 = yOffset - 6;
+    
+    doc.line(10, lineXL1, endXL1, lineXL1);
+    
+    doc.setFont("times", "normal");
+
+    doc.text(10, yOffset, "Answer any 2 question from this section. Each question carries 14 marks.")
+
+    longs.forEach((question, index) => {
+      doc.setFontSize(12.5);
+      doc.text(10, yOffset + 6.5, `${index + 1}) ${question.qno}`);
+      yOffset = yOffset + 6.5;
+    });
+
+
+
+    doc.save("question_paper.pdf");
+  };
+
   useEffect(() => {
     document.querySelectorAll(".select_mcq").forEach((e) => {
       const exist = Mcq.filter((elem) => {
@@ -366,6 +620,32 @@ the question and its part according to the question paper.
   }, [document.querySelectorAll(".select_mcq")]);
 
   useEffect(() => {
+    document.querySelectorAll(".select_short").forEach((e) => {
+      const exist = shorts.filter((elem) => {
+        return elem.id === e.value && e.id;
+      });
+      if (exist.length > 0) {
+        document.getElementById(e.id).checked = true;
+      } else {
+        document.getElementById(e.id).checked = false;
+      }
+    });
+  }, [document.querySelectorAll(".select_short")]);
+
+  useEffect(() => {
+    document.querySelectorAll(".select_long").forEach((e) => {
+      const exist = longs.filter((elem) => {
+        return elem.id === e.value && e.id;
+      });
+      if (exist.length > 0) {
+        document.getElementById(e.id).checked = true;
+      } else {
+        document.getElementById(e.id).checked = false;
+      }
+    });
+  }, [document.querySelectorAll(".select_long")]);
+
+  useEffect(() => {
     if (userdata && userdata.classs !== "Both" && user.isAdmin !== true) {
       const cls = userdata?.classs.split(" ")[0];
       setclas(userdata.classs);
@@ -376,9 +656,21 @@ the question and its part according to the question paper.
 
   return (
     <div>
-      <button onClick={generatePDF} className="d-block ms-auto btn btn-primary">
-        Download
-      </button>
+      {tab === "mcq" ? (
+        <button
+          onClick={generatePDF}
+          className="d-block ms-auto btn btn-primary"
+        >
+          Download MCQ's
+        </button>
+      ) : (
+        <button
+          onClick={generatePDF2}
+          className="d-block ms-auto btn btn-primary"
+        >
+          Download Sub
+        </button>
+      )}
       {slide === 0 && (
         <>
           {userdata.role === "Teacher" &&
@@ -742,9 +1034,9 @@ the question and its part according to the question paper.
                     >
                       <input
                         type="checkbox"
-                        className="large-checkbox me-3 mt-1 select_mcq"
+                        className={`large-checkbox me-3 mt-1 select_${tab}`}
                         onChange={(e) => AddQno(elem, e)}
-                        id={`mcq${i + 1}`}
+                        id={`${tab}${i + 1}`}
                         value={elem._id}
                       />
                       <div style={{ width: "95%" }}>
