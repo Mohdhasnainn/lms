@@ -18,6 +18,7 @@ const Bank = () => {
   const [Mcq, setMCQs] = useState([]);
   const [shorts, setShorts] = useState([]);
   const [longs, setLongs] = useState([]);
+  const [pdfDataUri, setPdfDataUri] = useState(null);
 
   const FETCH = async (cls, subj) => {
     setSLoading(true);
@@ -118,7 +119,7 @@ const Bank = () => {
     }
   };
 
-  const generatePDF = () => {
+  const generatePDF = (download) => {
     const doc = new jsPDF();
     let yOffset = 135;
     const columnWidth = doc.internal.pageSize.width / 2 - 20; // Divide the page into two columns
@@ -373,10 +374,15 @@ the question and its part according to the question paper.
       yOffset = optionYOffset + 2;
     });
 
-    doc.save("question_paper.pdf");
+    if (download) {
+      doc.save("question_paper.pdf");
+    } else {
+      const dataUri = doc.output("datauristring"); // Get the PDF content as a data URI
+      setPdfDataUri(dataUri);
+    }
   };
 
-  const generatePDF2 = () => {
+  const generatePDF2 = (download) => {
     const doc = new jsPDF();
     let yOffset = 105;
 
@@ -562,13 +568,13 @@ the question and its part according to the question paper.
       yOffset = yOffset + 6.5;
     });
 
-
     doc.setFontSize(14);
     doc.setFont("times", "bold");
 
     yOffset = yOffset + 40;
     const CenterXL =
-      (pageWidth - doc.getTextWidth(`SECTION ‘C’ (DETAILED ANSWER-QUESTIONS)`)) /
+      (pageWidth -
+        doc.getTextWidth(`SECTION ‘C’ (DETAILED ANSWER-QUESTIONS)`)) /
       2;
     doc.text(
       CenterXL + Math.abs(CenterX7 - CenterXL) / 2,
@@ -581,19 +587,23 @@ the question and its part according to the question paper.
     const lineYL = yOffset - 13;
 
     doc.line(startXL, lineYL, endXL, lineYL);
-    
+
     doc.text(175, yOffset - 15, `(Marks: 28)`);
 
     doc.text(10, yOffset - 8, `Note:`);
-    
+
     const endXL1 = 10 + doc.getTextWidth("Note");
     const lineXL1 = yOffset - 6;
-    
+
     doc.line(10, lineXL1, endXL1, lineXL1);
-    
+
     doc.setFont("times", "normal");
 
-    doc.text(10, yOffset, "Answer any 2 question from this section. Each question carries 14 marks.")
+    doc.text(
+      10,
+      yOffset,
+      "Answer any 2 question from this section. Each question carries 14 marks."
+    );
 
     longs.forEach((question, index) => {
       doc.setFontSize(12.5);
@@ -601,9 +611,12 @@ the question and its part according to the question paper.
       yOffset = yOffset + 6.5;
     });
 
-
-
-    doc.save("question_paper.pdf");
+    if (download) {
+      doc.save("question_paper.pdf");
+    } else {
+      const dataUri = doc.output("datauristring"); // Get the PDF content as a data URI
+      setPdfDataUri(dataUri);
+    }
   };
 
   useEffect(() => {
@@ -657,19 +670,39 @@ the question and its part according to the question paper.
   return (
     <div>
       {tab === "mcq" ? (
-        <button
-          onClick={generatePDF}
-          className="d-block ms-auto btn btn-primary"
+        <div
+          className="d-flex justify-content-end"
         >
-          Download MCQ's
-        </button>
+          <button
+            onClick={() => generatePDF(true)}
+            className="d-block btn btn-primary"
+          >
+            Download MCQ's
+          </button>
+          <button
+            onClick={() => generatePDF(false)}
+            className="d-block btn btn-warning ms-3"
+            disabled={pdfDataUri ? true : false}
+          >
+            Preview
+          </button>
+        </div>
       ) : (
-        <button
-          onClick={generatePDF2}
-          className="d-block ms-auto btn btn-primary"
-        >
-          Download Sub
-        </button>
+        <div className="d-flex justify-content-end">
+          <button
+            onClick={() => generatePDF2(true)}
+            className="d-block btn btn-primary"
+          >
+            Download Sub
+          </button>
+          <button
+            onClick={() => generatePDF2(false)}
+            className="d-block btn btn-warning ms-3"
+            disabled={pdfDataUri ? true : false}
+          >
+            Preview
+          </button>
+        </div>
       )}
       {slide === 0 && (
         <>
@@ -1065,6 +1098,37 @@ the question and its part according to the question paper.
               : "Nothing to show!"}
           </div>
         </div>
+      )}
+
+      {pdfDataUri && (
+        <>
+          <button
+            onClick={() => setPdfDataUri(null)}
+            style={{
+              zIndex: 20000000000,
+              position: "fixed",
+              right: "10%",
+              top: 10,
+            }}
+            className="btn btn-danger px-3"
+          >
+            Close
+          </button>
+          <iframe
+            style={{
+              position: "fixed",
+              top: 0,
+              width: "100%",
+              height: "100%",
+              left: "0%",
+            }}
+            title="PDF Viewer"
+            width="100%"
+            height="600"
+            src={pdfDataUri}
+            frameBorder="0"
+          />
+        </>
       )}
     </div>
   );
