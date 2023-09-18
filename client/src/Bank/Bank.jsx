@@ -119,6 +119,14 @@ const Bank = () => {
     }
   };
 
+  function shuffleArray(array) {
+    // Shuffle the array in-place using the Fisher-Yates algorithm
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
   const generatePDF = (download) => {
     const doc = new jsPDF();
     let yOffset = 135;
@@ -288,7 +296,6 @@ const Bank = () => {
     doc.text(10, 34, `Total time: 3 HRS`);
     doc.text(170, 34, `Max. Marks:`);
     doc.setFontSize(16); // Reset the font size
-    doc.text(175, 65, `Code “A”`);
 
     // Text 8
     const CenterX8 =
@@ -346,39 +353,68 @@ the question and its part according to the question paper.
       `1. Choose the correct answer for each question from the given options: - `
     );
 
-    // doc.setFont("Helvetica", "normal");
-    Mcq.forEach((question, index) => {
-      doc.setFontSize(12.5); // Reset the font size
-      doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
+    const numberOfVersions = 3;
+    for (let version = 1; version <= numberOfVersions; version++) {
+      const shuffledQuestions = [...Mcq];
+      shuffleArray(shuffledQuestions);
 
-      let optionXOffset = 10;
-      let optionYOffset = yOffset + 6.4;
+      shuffledQuestions.forEach((question, index) => {
+        const x = 175;
+        const y = 60;
+        const width = 200;
+        const height = 100;
+        doc.text(175, 65, `Code “A”`);
 
-      const optionLabels = ["a", "b", "c", "d"];
+        doc.setFillColor(255, 255, 255);
+        doc.rect(x, y, width, height, "F");
 
-      question.options.forEach((option, optionIndex) => {
-        doc.text(
-          optionXOffset,
-          optionYOffset,
-          `${optionLabels[optionIndex]}. ${option}`
-        );
 
-        if ((optionIndex + 1) % 2 === 0) {
-          optionYOffset += 6.4;
-          optionXOffset = 10;
-        } else {
-          optionXOffset += columnWidth + 10;
+        doc.setFont("Helvetica", "bold")
+        doc.setFontSize(14)
+
+        if (version === 1) {
+          doc.text(175, 65, `Code “A”`);
+        } else if (version === 2) {
+          doc.setTextColor(0, 0, 0);
+          doc.text(175, 65, `Code “B”`);
+        } else if (version === 3) {
+          doc.setTextColor(0, 0, 0);
+          doc.text(175, 65, `Code “C”`);
         }
+
+        doc.setFontSize(12.5);
+        doc.setFont("times", "normal")
+        doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
+
+        let optionXOffset = 10;
+        let optionYOffset = yOffset + 6.4;
+
+        const optionLabels = ["a", "b", "c", "d"];
+
+        question.options.forEach((option, optionIndex) => {
+          doc.text(
+            optionXOffset,
+            optionYOffset,
+            `${optionLabels[optionIndex]}. ${option}`
+          );
+
+          if ((optionIndex + 1) % 2 === 0) {
+            optionYOffset += 6.4;
+            optionXOffset = 10;
+          } else {
+            optionXOffset += columnWidth + 10;
+          }
+        });
+
+        yOffset = optionYOffset + 2;
       });
 
-      yOffset = optionYOffset + 2;
-    });
-
-    if (download) {
-      doc.save("question_paper.pdf");
-    } else {
-      const dataUri = doc.output("datauristring"); // Get the PDF content as a data URI
-      setPdfDataUri(dataUri);
+      if (download) {
+        doc.save("question_paper.pdf");
+      } else {
+        const dataUri = doc.output("datauristring"); // Get the PDF content as a data URI
+        setPdfDataUri(dataUri);
+      }
     }
   };
 
@@ -670,9 +706,7 @@ the question and its part according to the question paper.
   return (
     <div>
       {tab === "mcq" ? (
-        <div
-          className="d-flex justify-content-end"
-        >
+        <div className="d-flex justify-content-end">
           <button
             onClick={() => generatePDF(true)}
             className="d-block btn btn-primary"
