@@ -119,15 +119,7 @@ const Bank = () => {
     }
   };
 
-  function shuffleArray(array) {
-    // Shuffle the array in-place using the Fisher-Yates algorithm
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
-
-  const generatePDF = (download) => {
+  const generatePDF1 = (download, question, code) => {
     const doc = new jsPDF();
     let yOffset = 135;
     const columnWidth = doc.internal.pageSize.width / 2 - 20; // Divide the page into two columns
@@ -353,69 +345,55 @@ the question and its part according to the question paper.
       `1. Choose the correct answer for each question from the given options: - `
     );
 
-    const numberOfVersions = 3;
-    for (let version = 1; version <= numberOfVersions; version++) {
-      const shuffledQuestions = [...Mcq];
-      shuffleArray(shuffledQuestions);
+    question.forEach((question, index) => {
 
-      shuffledQuestions.forEach((question, index) => {
-        const x = 175;
-        const y = 60;
-        const width = 200;
-        const height = 100;
-        doc.text(175, 65, `Code “A”`);
+      doc.setFont("Helvetica", "bold")
+      doc.setFontSize(14)
 
-        doc.setFillColor(255, 255, 255);
-        doc.rect(x, y, width, height, "F");
+      doc.text(175, 65, `Code “${code}”`);
+      doc.setFontSize(12.5);
+      doc.setFont("times", "normal");
+      doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
 
+      let optionXOffset = 10;
+      let optionYOffset = yOffset + 6.4;
 
-        doc.setFont("Helvetica", "bold")
-        doc.setFontSize(14)
+      const optionLabels = ["a", "b", "c", "d"];
 
-        if (version === 1) {
-          doc.text(175, 65, `Code “A”`);
-        } else if (version === 2) {
-          doc.setTextColor(0, 0, 0);
-          doc.text(175, 65, `Code “B”`);
-        } else if (version === 3) {
-          doc.setTextColor(0, 0, 0);
-          doc.text(175, 65, `Code “C”`);
+      question.options.forEach((option, optionIndex) => {
+        doc.text(
+          optionXOffset,
+          optionYOffset,
+          `${optionLabels[optionIndex]}. ${option}`
+        );
+
+        if ((optionIndex + 1) % 2 === 0) {
+          optionYOffset += 6.4;
+          optionXOffset = 10;
+        } else {
+          optionXOffset += columnWidth + 10;
         }
-
-        doc.setFontSize(12.5);
-        doc.setFont("times", "normal")
-        doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
-
-        let optionXOffset = 10;
-        let optionYOffset = yOffset + 6.4;
-
-        const optionLabels = ["a", "b", "c", "d"];
-
-        question.options.forEach((option, optionIndex) => {
-          doc.text(
-            optionXOffset,
-            optionYOffset,
-            `${optionLabels[optionIndex]}. ${option}`
-          );
-
-          if ((optionIndex + 1) % 2 === 0) {
-            optionYOffset += 6.4;
-            optionXOffset = 10;
-          } else {
-            optionXOffset += columnWidth + 10;
-          }
-        });
-
-        yOffset = optionYOffset + 2;
       });
 
-      if (download) {
-        doc.save("question_paper.pdf");
-      } else {
-        const dataUri = doc.output("datauristring"); // Get the PDF content as a data URI
-        setPdfDataUri(dataUri);
-      }
+      yOffset = optionYOffset + 2;
+    });
+
+    if (download) {
+      doc.save("question_paper.pdf");
+    } else {
+      const dataUri = doc.output("datauristring"); // Get the PDF content as a data URI
+      setPdfDataUri(dataUri);
     }
+  };
+
+  const generateMCQPDF = () => {
+    generatePDF1(true, Mcq, "A");
+    let no1 = Math.random() > 0.2 ? 0.6 : 1;
+    let mcq2 = Mcq.sort(() => Math.random() - no1);
+    generatePDF1(true, mcq2, "B");
+    let no2 = no1 > 0.6 ? 1 : 0.1;
+    let mcq3 = Mcq.sort(() => Math.random() - no2);
+    generatePDF1(true, mcq3, "C");
   };
 
   const generatePDF2 = (download) => {
@@ -708,14 +686,14 @@ the question and its part according to the question paper.
       {tab === "mcq" ? (
         <div className="d-flex justify-content-end">
           <button
-            onClick={() => generatePDF(true)}
-            className="d-block btn btn-primary"
+            onClick={() => generateMCQPDF(true)}
+            className="d-block btn btn-primary options_btn"
           >
             Download MCQ's
           </button>
           <button
-            onClick={() => generatePDF(false)}
-            className="d-block btn btn-warning ms-3"
+            onClick={() => generatePDF1(false, Mcq, "A")}
+            className="d-block btn btn-warning ms-3 options_btn"
             disabled={pdfDataUri ? true : false}
           >
             Preview
@@ -725,13 +703,13 @@ the question and its part according to the question paper.
         <div className="d-flex justify-content-end">
           <button
             onClick={() => generatePDF2(true)}
-            className="d-block btn btn-primary"
+            className="d-block btn btn-primary options_btn"
           >
             Download Sub
           </button>
           <button
             onClick={() => generatePDF2(false)}
-            className="d-block btn btn-warning ms-3"
+            className="d-block btn btn-warning ms-3 options_btn"
             disabled={pdfDataUri ? true : false}
           >
             Preview
@@ -1045,10 +1023,10 @@ the question and its part according to the question paper.
             cursor={"pointer"}
             onClick={() => setSlide(1)}
           />
-          <div className="d-flex align-items-center justify-content-between mx-auto w-75 mt-3">
+          <div className="d-flex align-items-center qno_container justify-content-between mx-auto w-75 mt-3">
             <div
               className="class_card rounded border py-3 px-2 w-25 me-4 fs-5 
-              text-center"
+              text-center qno_type"
               style={{
                 background: tab === "mcq" && "#1677ff",
                 color: tab === "mcq" && "white",
@@ -1062,7 +1040,7 @@ the question and its part according to the question paper.
               MCQS
             </div>
             <div
-              className="class_card rounded border py-3 px-2 w-25 fs-5  text-center me-3"
+              className="class_card rounded qno_type border py-3 px-2 w-25 fs-5  text-center me-3"
               type="button"
               onClick={() => {
                 setTab("short");
@@ -1076,7 +1054,7 @@ the question and its part according to the question paper.
               SHORT
             </div>
             <div
-              className="class_card rounded border py-3 px-2 w-25 fs-5  text-center"
+              className="class_card rounded qno_type border py-3 px-2 w-25 fs-5  text-center"
               type="button"
               onClick={() => {
                 setTab("long");
@@ -1091,7 +1069,7 @@ the question and its part according to the question paper.
             </div>
           </div>
 
-          <div className="w-75 mx-auto mt-5">
+          <div className="w-75 mx-auto mt-5 mcq_container">
             {subdata.length > 0
               ? subdata.map((elem, i) => {
                   return (
@@ -1111,7 +1089,7 @@ the question and its part according to the question paper.
                           <span className="fs-6 fw-bold"> {i + 1}.</span>{" "}
                           {elem.qno}
                         </p>
-                        <div className="d-flex justify-content-between flex-wrap w-100 align-items-center">
+                        <div className="d-flex justify-content-between mcq_options flex-wrap w-100 align-items-center">
                           {elem?.options &&
                             elem.options.map((e, index) => {
                               const sno = ["a", "b", "c", "d"];

@@ -7,32 +7,37 @@
   font-family: "Poppins", sans-serif !important;
 }
 
-:root{
+:root {
   --primary-color: #1677ff;
 }
 
-.blue{
+.blue {
   background: rgb(1, 75, 233);
 }
 
-.cards .card{
+.cards .card {
   width: 33%;
 }
 
-.dblue{
+.dblue {
   background: rgb(2, 2, 109);
 }
 
-
-.orange{
+.orange {
   background: rgb(255, 115, 0);
 }
 
-a{
+a {
   text-decoration: none;
 }
 
-p,h1,h2,h3,h4,h5,h6{
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin-bottom: 0px !important;
 }
 
@@ -44,17 +49,14 @@ p,h1,h2,h3,h4,h5,h6{
   background-color: #f2f6f8;
 }
 
-
-
-.QnoSection .modal-dialog{
+.QnoSection .modal-dialog {
   max-width: 60% !important;
 }
 
-.class_card:hover{
+.class_card:hover {
   background: var(--primary-color);
   color: white;
 }
-
 
 .large-checkbox {
   -webkit-appearance: none; /* Remove default styles on WebKit browsers */
@@ -90,5 +92,51 @@ p,h1,h2,h3,h4,h5,h6{
   .aside.ant-layout-sider-collapsed {
     width: 0px !important;
     min-width: 0px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .ant-layout-content {
+    padding: 20px 15px !important;
+  }
+  .mcq_options {
+    flex-direction: column !important;
+  }
+
+  .mcq_options .w-50 {
+    width: 100% !important;
+  }
+
+  .chapter {
+    font-size: 1.05rem !important;
+  }
+  .options_btn {
+    padding: 3px 5px !important;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+  .mcq_container {
+    width: 100% !important;
+  }
+  .qno_container {
+    width: 100% !important;
+  }
+  .large-checkbox {
+    width: 15px;
+    height: 15px;
+  }
+  .mcq_container .fs-5{
+    font-size: 1.02rem !important;
+  }
+  .QnoSection .modal-dialog {
+    max-width: 100% !important;
+}
+ .qno_type {
+    width: 33.33% !important;
+    font-size: 0.9rem !important;
+    margin-right: 5px !important;
+  }
+  .class_card {
+    width: 50% !important;
   }
 }

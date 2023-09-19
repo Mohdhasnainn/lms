@@ -53,7 +53,7 @@ const Dashboard = () => {
             style: { fontSize: "1.4rem", marginLeft: "10px", color: "#fff" },
             onClick: () => setCollapsed(!collapsed),
           })}
-          <p className="text-white ms-3">{userdata?.role}</p>
+          {/* <p className="text-white ms-3">{userdata?.role}</p> */}
         </div>
 
         <div className="d-flex align-items-center ms-auto">
