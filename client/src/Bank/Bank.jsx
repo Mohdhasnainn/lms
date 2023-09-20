@@ -346,9 +346,8 @@ the question and its part according to the question paper.
     );
 
     question.forEach((question, index) => {
-
-      doc.setFont("Helvetica", "bold")
-      doc.setFontSize(14)
+      doc.setFont("Helvetica", "bold");
+      doc.setFontSize(14);
 
       doc.text(175, 65, `Code “${code}”`);
       doc.setFontSize(12.5);
@@ -691,13 +690,15 @@ the question and its part according to the question paper.
           >
             Download MCQ's
           </button>
-          <button
-            onClick={() => generatePDF1(false, Mcq, "A")}
-            className="d-block btn btn-warning ms-3 options_btn"
-            disabled={pdfDataUri ? true : false}
-          >
-            Preview
-          </button>
+          {window.matchMedia("(min-width: 1024px").matches && (
+            <button
+              onClick={() => generatePDF1(false, Mcq, "A")}
+              className="d-block btn btn-warning ms-3 options_btn"
+              disabled={pdfDataUri ? true : false}
+            >
+              Preview
+            </button>
+          )}
         </div>
       ) : (
         <div className="d-flex justify-content-end">
@@ -707,13 +708,15 @@ the question and its part according to the question paper.
           >
             Download Sub
           </button>
-          <button
-            onClick={() => generatePDF2(false)}
-            className="d-block btn btn-warning ms-3 options_btn"
-            disabled={pdfDataUri ? true : false}
-          >
-            Preview
-          </button>
+          {window.matchMedia("(min-width: 1024px").matches && (
+            <button
+              onClick={() => generatePDF2(false)}
+              className="d-block btn btn-warning ms-3 options_btn"
+              disabled={pdfDataUri ? true : false}
+            >
+              Preview
+            </button>
+          )}
         </div>
       )}
       {slide === 0 && (
