@@ -387,10 +387,10 @@ the question and its part according to the question paper.
 
   const generateMCQPDF = () => {
     generatePDF1(true, Mcq, "A");
-    let no1 = Math.random() > 0.2 ? 0.6 : 1;
+    let no1 = Math.random() > 0.2 ? 0.4 : 0.6;
     let mcq2 = Mcq.sort(() => Math.random() - no1);
     generatePDF1(true, mcq2, "B");
-    let no2 = no1 > 0.6 ? 1 : 0.1;
+    let no2 = no1 === 0.4 ? 0.6 : 0.4;
     let mcq3 = Mcq.sort(() => Math.random() - no2);
     generatePDF1(true, mcq3, "C");
   };
