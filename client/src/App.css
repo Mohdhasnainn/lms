@@ -49,7 +49,8 @@ h6 {
   background-color: #f2f6f8;
 }
 
-.QnoSection .modal-dialog {
+.QnoSection .modal-dialog,
+#reviewModal .modal-dialog {
   max-width: 60% !important;
 }
 
@@ -128,7 +129,8 @@ h6 {
   .mcq_container .fs-5{
     font-size: 1.02rem !important;
   }
-  .QnoSection .modal-dialog {
+  .QnoSection .modal-dialog,
+  #reviewModal .modal-dialog {
     max-width: 100% !important;
 }
  .qno_type {

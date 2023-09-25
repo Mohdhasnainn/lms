@@ -4,6 +4,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { GiFastBackwardButton } from "react-icons/gi";
 import jsPDF from "jspdf";
+import {AiFillDelete} from "react-icons/ai";
+import {MdOutlineEdit} from "react-icons/md";
 
 const Bank = () => {
   const { userdata, user } = useAuthContext();
@@ -632,6 +634,7 @@ the question and its part according to the question paper.
     }
   };
 
+
   useEffect(() => {
     document.querySelectorAll(".select_mcq").forEach((e) => {
       const exist = Mcq.filter((elem) => {
@@ -646,6 +649,19 @@ the question and its part according to the question paper.
   }, [document.querySelectorAll(".select_mcq")]);
 
   useEffect(() => {
+    document.querySelectorAll(".review_mcq").forEach((e) => {
+      const exist = Mcq.filter((elem) => {
+        return elem.id === e.value && e.id;
+      });
+      if (exist.length > 0) {
+        document.getElementById(e.id).checked = true;
+      } else {
+        document.getElementById(e.id).checked = false;
+      }
+    });
+  }, [document.querySelectorAll(".review_mcq")]);
+
+  useEffect(() => {
     document.querySelectorAll(".select_short").forEach((e) => {
       const exist = shorts.filter((elem) => {
         return elem.id === e.value && e.id;
@@ -656,7 +672,21 @@ the question and its part according to the question paper.
         document.getElementById(e.id).checked = false;
       }
     });
-  }, [document.querySelectorAll(".select_short")]);
+
+    document.querySelectorAll(".review_short").forEach((e) => {
+      const exist = shorts.filter((elem) => {
+        return elem.id === e.value && e.id;
+      });
+      if (exist.length > 0) {
+        document.getElementById(e.id).checked = true;
+      } else {
+        document.getElementById(e.id).checked = false;
+      }
+    });
+  }, [
+    document.querySelectorAll(".select_short"),
+    document.querySelectorAll(".review_short"),
+  ]);
 
   useEffect(() => {
     document.querySelectorAll(".select_long").forEach((e) => {
@@ -669,7 +699,21 @@ the question and its part according to the question paper.
         document.getElementById(e.id).checked = false;
       }
     });
-  }, [document.querySelectorAll(".select_long")]);
+
+    document.querySelectorAll(".review_long").forEach((e) => {
+      const exist = longs.filter((elem) => {
+        return elem.id === e.value && e.id;
+      });
+      if (exist.length > 0) {
+        document.getElementById(e.id).checked = true;
+      } else {
+        document.getElementById(e.id).checked = false;
+      }
+    });
+  }, [
+    document.querySelectorAll(".select_long"),
+    document.querySelectorAll(".review_long"),
+  ]);
 
   useEffect(() => {
     if (userdata && userdata.classs !== "Both" && user.isAdmin !== true) {
@@ -679,6 +723,29 @@ the question and its part according to the question paper.
       setSlide(1);
     }
   }, []);
+
+  const HandleDelete = async (elem)=>{
+    const promptt = confirm("Are you sure?")
+    if(promptt){
+    await axios.post(import.meta.env.VITE_URL +
+      `/api/bank/deleteqno`,
+      {
+        id: elem._id
+      },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        token: Cookies.get("token"),
+      },
+    })
+    FetchQuestions(clas, elem.chapter, subject)
+  }
+  }
+
+
+  const HandleEdit  = async ()=>{
+
+  }
 
   return (
     <div>
@@ -699,6 +766,13 @@ the question and its part according to the question paper.
               Preview
             </button>
           )}
+          <button
+            className="d-block btn btn-secondary ms-3 options_btn"
+            data-bs-toggle="modal"
+            data-bs-target="#reviewModal"
+          >
+            Review
+          </button>
         </div>
       ) : (
         <div className="d-flex justify-content-end">
@@ -709,13 +783,22 @@ the question and its part according to the question paper.
             Download Sub
           </button>
           {window.matchMedia("(min-width: 1024px").matches && (
-            <button
-              onClick={() => generatePDF2(false)}
-              className="d-block btn btn-warning ms-3 options_btn"
-              disabled={pdfDataUri ? true : false}
-            >
-              Preview
-            </button>
+            <>
+              <button
+                onClick={() => generatePDF2(false)}
+                className="d-block btn btn-warning ms-3 options_btn"
+                disabled={pdfDataUri ? true : false}
+              >
+                Preview
+              </button>
+              <button 
+                className="d-block btn btn-secondary ms-3 options_btn"
+                data-bs-toggle="modal"
+                data-bs-target="#reviewModal"
+              >
+                Review
+              </button>
+            </>
           )}
         </div>
       )}
@@ -724,7 +807,7 @@ the question and its part according to the question paper.
           {userdata.role === "Teacher" &&
           userdata.classs.toLowerCase() === "both" ? (
             <div>
-              <h2 className="fw-bold text-center">Please Choose class</h2>
+              <h2 className="fw-bold text-center mt-4">Please Choose class</h2>
               <div className="d-flex align-items-center justify-content-center mt-3">
                 <div
                   className="class_card rounded border py-3 px-2 w-25 me-4 fs-5 text-center"
@@ -790,7 +873,10 @@ the question and its part according to the question paper.
                 size={25}
                 className="back"
                 cursor={"pointer"}
-                onClick={() => setSlide(0)}
+                onClick={() => {
+                  setSlide(0);
+                  setTab("mcq");
+                }}
               />
               <h1 className="text-center fw-bold">Class 9 Subjects</h1>
               <p
@@ -863,16 +949,6 @@ the question and its part according to the question paper.
               >
                 Biology
               </p>
-              {/* <p
-                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
-                type="button"
-                onClick={(e) => {
-                  FETCH("10", e.target.innerHTML);
-                  setSlide(1);
-                }}
-              >
-                PST
-              </p> */}
               <p
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
                 type="button"
@@ -881,8 +957,18 @@ the question and its part according to the question paper.
                   setSlide(1);
                 }}
               >
-                Islamiat
+                PST
               </p>
+              {/* <p
+                className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
+                type="button"
+                onClick={(e) => {
+                  FETCH("10", e.target.innerHTML);
+                  setSlide(1);
+                }}
+              >
+                Islamiat
+              </p> */}
             </div>
           ) : (
             <div className="px-5">
@@ -963,7 +1049,7 @@ the question and its part according to the question paper.
               >
                 Computer
               </p>
-              {/* <p
+              <p
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
                 type="button"
                 onClick={(e) => {
@@ -972,8 +1058,8 @@ the question and its part according to the question paper.
                 }}
               >
                 PST
-              </p> */}
-              <p
+              </p>
+              {/* <p
                 className="fs-5 mt-1 px-3 py-2 bg-gray rounded"
                 type="button"
                 onClick={(e) => {
@@ -982,7 +1068,7 @@ the question and its part according to the question paper.
                 }}
               >
                 Islamiat
-              </p>
+              </p> */}
             </div>
           )}
         </>
@@ -1077,7 +1163,7 @@ the question and its part according to the question paper.
               ? subdata.map((elem, i) => {
                   return (
                     <div
-                      key={elem.qno}
+                      key={elem.qno + i + ""}
                       className="d-flex align-items-start mt-3"
                     >
                       <input
@@ -1107,6 +1193,10 @@ the question and its part according to the question paper.
                             })}
                         </div>
                       </div>
+                        <AiFillDelete  size={25} cursor={"pointer"}
+                          color="red" onClick={()=> HandleDelete(elem)} className="me-3"/>
+                           <MdOutlineEdit  size={25} cursor={"pointer"}
+                          color="BLUE" onClick={()=> HandleEdit(elem)}/>
                     </div>
                   );
                 })
@@ -1145,6 +1235,84 @@ the question and its part according to the question paper.
           />
         </>
       )}
+
+      <div
+        className="modal fade"
+        id="reviewModal"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="reviewModalLabel">
+                Review
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <div style={{ height: "65vh", overflowY: "scroll" }}>
+                {subdata.length > 0
+                  ? subdata.map((elem, i) => {
+                      return (
+                        <div
+                          key={elem.qno + i + ""}
+                          className="d-flex align-items-start mt-3"
+                        >
+                          <input
+                            type="checkbox"
+                            className={`large-checkbox me-3 mt-1 review_${tab}`}
+                            onChange={(e) => AddQno(elem, e)}
+                            id={`R${tab}${i + 1}`}
+                            value={elem._id}
+                          />
+                          <div style={{ width: "95%" }}>
+                            <p className="fs-5">
+                              <span className="fs-6 fw-bold"> {i + 1}.</span>{" "}
+                              {elem.qno}
+                            </p>
+                            <div className="d-flex justify-content-between mcq_options flex-wrap w-100 align-items-center">
+                              {elem?.options &&
+                                elem.options.map((e, index) => {
+                                  const sno = ["a", "b", "c", "d"];
+                                  return (
+                                    <p className="mt-1 fs-5 w-50" key={e}>
+                                      <span className="fs-6 fw-bold text-muted">
+                                        {sno[index]}.
+                                      </span>{" "}
+                                      {e}
+                                    </p>
+                                  );
+                                })}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  : "Nothing to show!"}
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="button" className="btn btn-primary">
+                Save changes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

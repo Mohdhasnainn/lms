@@ -4,7 +4,7 @@ import { verifyToken } from "../Middlewares/verifyUser.js";
 
 const router = express.Router();
 
-router.get("/chapters", async (req, res) => {
+router.get("/chapters", verifyToken, async (req, res) => {
   const chapters = await SubjectModel.find({
     class: req.query.class,
     subject: req.query.subject,
@@ -13,18 +13,17 @@ router.get("/chapters", async (req, res) => {
   res.json({ data: chapters });
 });
 
-
-router.get("/findqno", async (req, res) => {
+router.get("/findqno", verifyToken, async (req, res) => {
   const questions = await QuestionModel.find({
     class: req.query.class,
     subject: req.query.subject,
-    chapter: req.query.chapter
+    chapter: req.query.chapter,
   });
 
   res.json({ data: questions });
 });
 
-router.post("/add", async (req, res) => {
+router.post("/add", verifyToken, async (req, res) => {
   const { qno, options, correct_answer, type, subject, chapter } = req.body;
 
   await QuestionModel.create({
@@ -38,6 +37,11 @@ router.post("/add", async (req, res) => {
   });
 
   res.json({ msg: "Succesfully added!" });
+});
+
+router.post("/deleteqno", verifyToken, async (req, res) => {
+  await QuestionModel.findByIdAndDelete(req.body.id);
+  res.json({ msg: "Succesfully Deleted!" });
 });
 
 export default router;
