@@ -39,6 +39,12 @@ router.post("/add", verifyToken, async (req, res) => {
   res.json({ msg: "Succesfully added!" });
 });
 
+router.put("/update", verifyToken, async (req, res) => {
+  await QuestionModel.findByIdAndUpdate(req.body._id,  req.body, { new: true });
+
+  res.json({ msg: "Succesfully updated!" });
+});
+
 router.post("/deleteqno", verifyToken, async (req, res) => {
   await QuestionModel.findByIdAndDelete(req.body.id);
   res.json({ msg: "Succesfully Deleted!" });

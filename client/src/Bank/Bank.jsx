@@ -4,8 +4,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { GiFastBackwardButton } from "react-icons/gi";
 import jsPDF from "jspdf";
-import {AiFillDelete} from "react-icons/ai";
-import {MdOutlineEdit} from "react-icons/md";
+import { AiFillDelete } from "react-icons/ai";
+import { MdOutlineEdit } from "react-icons/md";
 
 const Bank = () => {
   const { userdata, user } = useAuthContext();
@@ -14,6 +14,7 @@ const Bank = () => {
   const [subdata, setSubdata] = useState([]);
   const [chapters, setChapters] = useState([]);
   const [questions, setQuestions] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [sloading, setSLoading] = useState(false);
   const [tab, setTab] = useState("mcq");
   const [subject, setsubject] = useState(userdata.subject);
@@ -21,6 +22,7 @@ const Bank = () => {
   const [shorts, setShorts] = useState([]);
   const [longs, setLongs] = useState([]);
   const [pdfDataUri, setPdfDataUri] = useState(null);
+  const [editmcq, setEditMcq] = useState("");
 
   const FETCH = async (cls, subj) => {
     setSLoading(true);
@@ -53,11 +55,23 @@ const Bank = () => {
       }
     );
     setSlide(2);
-    const sdata = data.data.filter((elem) => {
-      return elem.type === "mcq";
-    });
-    setSubdata(sdata);
     setQuestions(data.data);
+    if (tab === "mcq") {
+      const sdata = data.data.filter((elem) => {
+        return elem.type === "mcq";
+      });
+      setSubdata(sdata);
+    } else if (tab === "short") {
+      const sdata = data.data.filter((elem) => {
+        return elem.type === "short";
+      });
+      setSubdata(sdata);
+    } else {
+      const sdata = data.data.filter((elem) => {
+        return elem.type === "long";
+      });
+      setSubdata(sdata);
+    }
   };
 
   const FilterMCQS = () => {
@@ -634,7 +648,6 @@ the question and its part according to the question paper.
     }
   };
 
-
   useEffect(() => {
     document.querySelectorAll(".select_mcq").forEach((e) => {
       const exist = Mcq.filter((elem) => {
@@ -724,28 +737,54 @@ the question and its part according to the question paper.
     }
   }, []);
 
-  const HandleDelete = async (elem)=>{
-    const promptt = confirm("Are you sure?")
-    if(promptt){
-    await axios.post(import.meta.env.VITE_URL +
-      `/api/bank/deleteqno`,
+  const HandleDelete = async (elem) => {
+    const promptt = confirm("Are you sure?");
+    if (promptt) {
+      await axios.post(
+        import.meta.env.VITE_URL + `/api/bank/deleteqno`,
+        {
+          id: elem._id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            token: Cookies.get("token"),
+          },
+        }
+      );
+      FetchQuestions(clas, elem.chapter, subject);
+    }
+  };
+
+  const HandleEdit = async () => {
+    setLoading(true);
+    await axios.put(
+      import.meta.env.VITE_URL + `/api/bank/update`,
       {
-        id: elem._id
+        ...editmcq,
       },
-    {
-      headers: {
-        "Content-Type": "application/json",
-        token: Cookies.get("token"),
-      },
-    })
-    FetchQuestions(clas, elem.chapter, subject)
-  }
-  }
+      {
+        headers: {
+          "Content-Type": "application/json",
+          token: Cookies.get("token"),
+        },
+      }
+    );
 
+    FetchQuestions(clas, editmcq.chapter, subject);
 
-  const HandleEdit  = async ()=>{
-
-  }
+    if (tab === "short") {
+      setTab("short");
+      FilterShort();
+    } else if (tab === "long") {
+      setTab("long");
+      FilterLong();
+    } else {
+      setTab("mcq");
+      FilterMCQS();
+    }
+    setLoading(false);
+  };
 
   return (
     <div>
@@ -791,7 +830,7 @@ the question and its part according to the question paper.
               >
                 Preview
               </button>
-              <button 
+              <button
                 className="d-block btn btn-secondary ms-3 options_btn"
                 data-bs-toggle="modal"
                 data-bs-target="#reviewModal"
@@ -1093,7 +1132,7 @@ the question and its part according to the question paper.
                 <div
                   type="button"
                   className="d-flex justify-content-between align-items-center chapter px-3 py-2 bg-gray fs-5 rounded mt-2"
-                  key={elem}
+                  key={i + 10}
                   onClick={() => FetchQuestions(clas, elem, subject)}
                 >
                   Chapter {i + 1} : {elem}
@@ -1163,7 +1202,7 @@ the question and its part according to the question paper.
               ? subdata.map((elem, i) => {
                   return (
                     <div
-                      key={elem.qno + i + ""}
+                      key={i + 100}
                       className="d-flex align-items-start mt-3"
                     >
                       <input
@@ -1183,7 +1222,7 @@ the question and its part according to the question paper.
                             elem.options.map((e, index) => {
                               const sno = ["a", "b", "c", "d"];
                               return (
-                                <p className="mt-1 fs-5 w-50" key={e}>
+                                <p className="mt-1 fs-5 w-50" key={i + 1000}>
                                   <span className="fs-6 fw-bold text-muted">
                                     {sno[index]}.
                                   </span>{" "}
@@ -1193,10 +1232,23 @@ the question and its part according to the question paper.
                             })}
                         </div>
                       </div>
-                        <AiFillDelete  size={25} cursor={"pointer"}
-                          color="red" onClick={()=> HandleDelete(elem)} className="me-3"/>
-                           <MdOutlineEdit  size={25} cursor={"pointer"}
-                          color="BLUE" onClick={()=> HandleEdit(elem)}/>
+                      <AiFillDelete
+                        size={25}
+                        cursor={"pointer"}
+                        color="red"
+                        onClick={() => HandleDelete(elem)}
+                        className="me-3"
+                      />
+                      <MdOutlineEdit
+                        size={25}
+                        cursor={"pointer"}
+                        color="BLUE"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editmcqModal"
+                        onClick={() => {
+                          setEditMcq(elem);
+                        }}
+                      />
                     </div>
                   );
                 })
@@ -1204,6 +1256,122 @@ the question and its part according to the question paper.
           </div>
         </div>
       )}
+
+      <div
+        className="modal fade"
+        id="editmcqModal"
+        tabIndex="-1"
+        aria-labelledby="editmcqModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog mt-5">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="editmcqModalLabel">
+                Edit {tab.toUpperCase()}
+              </h1>
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <label className="fw-bold fs-5">Question:</label>
+              <input
+                className="form-control mt-1"
+                type="text"
+                id={tab}
+                value={editmcq?.qno}
+                onChange={(e) =>
+                  setEditMcq((prev) => ({ ...prev, qno: e.target.value }))
+                }
+              />
+              {tab === "mcq" && (
+                <>
+                  <div className="d-flex mt-3">
+                    <input
+                      className="mt-1"
+                      type="radio"
+                      name="option"
+                      onChange={(e) => e.target.checked && setCorrect(1)}
+                    />
+                    <input
+                      type="text"
+                      contentEditable={true}
+                      className="py-1 form-control ms-3"
+                      placeholder="Option 1"
+                      id="option1"
+                    />
+                  </div>
+                  <div className="d-flex mt-3">
+                    <input
+                      className="mt-1"
+                      type="radio"
+                      name="option"
+                      onChange={(e) => e.target.checked && setCorrect(2)}
+                    />
+                    <input
+                      type="text"
+                      contentEditable={true}
+                      className="py-1 form-control ms-3"
+                      placeholder="Option 2"
+                      id="option2"
+                    />
+                  </div>
+                  <div className="d-flex mt-2">
+                    <input
+                      className="mt-1"
+                      type="radio"
+                      name="option"
+                      onChange={(e) => e.target.checked && setCorrect(3)}
+                    />
+                    <input
+                      type="text"
+                      contentEditable={true}
+                      className="py-1 form-control ms-3"
+                      placeholder="Option 3"
+                      id="option3"
+                    />
+                  </div>
+                  <div className="d-flex mt-2">
+                    <input
+                      className="mt-1"
+                      type="radio"
+                      name="option"
+                      onChange={(e) => e.target.checked && setCorrect(4)}
+                    />
+                    <input
+                      type="text"
+                      contentEditable={true}
+                      className="py-1 form-control ms-3"
+                      placeholder="Option 4"
+                      id="option4"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => HandleEdit(editmcq)}
+              >
+                {loading ? "Loading" : "Update"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {pdfDataUri && (
         <>
@@ -1262,7 +1430,7 @@ the question and its part according to the question paper.
                   ? subdata.map((elem, i) => {
                       return (
                         <div
-                          key={elem.qno + i + ""}
+                          key={i + 10000}
                           className="d-flex align-items-start mt-3"
                         >
                           <input
@@ -1282,7 +1450,7 @@ the question and its part according to the question paper.
                                 elem.options.map((e, index) => {
                                   const sno = ["a", "b", "c", "d"];
                                   return (
-                                    <p className="mt-1 fs-5 w-50" key={e}>
+                                    <p className="mt-1 fs-5 w-50" key={i + 100000}>
                                       <span className="fs-6 fw-bold text-muted">
                                         {sno[index]}.
                                       </span>{" "}
