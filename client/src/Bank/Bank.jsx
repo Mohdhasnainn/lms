@@ -19,6 +19,7 @@ const Bank = () => {
   const [tab, setTab] = useState("mcq");
   const [subject, setsubject] = useState(userdata.subject);
   const [Mcq, setMCQs] = useState([]);
+  const [Mcq2, setMcq2] = useState([]);
   const [shorts, setShorts] = useState([]);
   const [longs, setLongs] = useState([]);
   const [pdfDataUri, setPdfDataUri] = useState(null);
@@ -100,23 +101,28 @@ const Bank = () => {
       if (e.target.checked) {
         setMCQs((prevDataArray) => [
           ...prevDataArray,
-          { qno: qno.qno, options: qno.options, id: qno._id },
+          { qno: qno.qno, options: qno.options, _id: qno._id },
+        ]);
+        setMcq2((prevDataArray) => [
+          ...prevDataArray,
+          { qno: qno.qno, options: qno.options, _id: qno._id },
         ]);
       } else {
         const filtered = Mcq.filter((elem) => {
-          return elem.id !== qno._id;
+          return elem._id !== qno._id;
         });
+        setMcq2(filtered);
         setMCQs(filtered);
       }
     } else if (tab === "short") {
       if (e.target.checked) {
         setShorts((prevDataArray) => [
           ...prevDataArray,
-          { qno: qno.qno, id: qno._id },
+          { qno: qno.qno, _id: qno._id },
         ]);
       } else {
         const filtered = shorts.filter((elem) => {
-          return elem.id !== qno._id;
+          return elem._id !== qno._id;
         });
         setShorts(filtered);
       }
@@ -124,11 +130,51 @@ const Bank = () => {
       if (e.target.checked) {
         setLongs((prevDataArray) => [
           ...prevDataArray,
-          { qno: qno.qno, id: qno._id },
+          { qno: qno.qno, _id: qno._id },
         ]);
       } else {
         const filtered = longs.filter((elem) => {
-          return elem.id !== qno._id;
+          return elem._id !== qno._id;
+        });
+        setLongs(filtered);
+      }
+    }
+  };
+
+  const AddQno2 = async (qno, e) => {
+    if (tab === "mcq") {
+      if (e.target.checked) {
+        setMcq2((prevDataArray) => [
+          ...prevDataArray,
+          { qno: qno.qno, options: qno.options, _id: qno._id },
+        ]);
+      } else {
+        const filtered = Mcq2.filter((elem) => {
+          return elem._id !== qno._id;
+        });
+        setMcq2(filtered);
+      }
+    } else if (tab === "short") {
+      if (e.target.checked) {
+        setShorts((prevDataArray) => [
+          ...prevDataArray,
+          { qno: qno.qno, _id: qno._id },
+        ]);
+      } else {
+        const filtered = shorts.filter((elem) => {
+          return elem._id !== qno._id;
+        });
+        setShorts(filtered);
+      }
+    } else if (tab === "long") {
+      if (e.target.checked) {
+        setLongs((prevDataArray) => [
+          ...prevDataArray,
+          { qno: qno.qno, _id: qno._id },
+        ]);
+      } else {
+        const filtered = longs.filter((elem) => {
+          return elem._id !== qno._id;
         });
         setLongs(filtered);
       }
@@ -651,7 +697,7 @@ the question and its part according to the question paper.
   useEffect(() => {
     document.querySelectorAll(".select_mcq").forEach((e) => {
       const exist = Mcq.filter((elem) => {
-        return elem.id === e.value && e.id;
+        return elem._id === e.value && e.id;
       });
       if (exist.length > 0) {
         document.getElementById(e.id).checked = true;
@@ -663,9 +709,12 @@ the question and its part according to the question paper.
 
   useEffect(() => {
     document.querySelectorAll(".review_mcq").forEach((e) => {
-      const exist = Mcq.filter((elem) => {
-        return elem.id === e.value && e.id;
+      const exist = Mcq2.filter((elem) => {
+        return elem._id === e.value;
       });
+
+      console.log(exist);
+
       if (exist.length > 0) {
         document.getElementById(e.id).checked = true;
       } else {
@@ -677,7 +726,7 @@ the question and its part according to the question paper.
   useEffect(() => {
     document.querySelectorAll(".select_short").forEach((e) => {
       const exist = shorts.filter((elem) => {
-        return elem.id === e.value && e.id;
+        return elem._id === e.value && e.id;
       });
       if (exist.length > 0) {
         document.getElementById(e.id).checked = true;
@@ -688,7 +737,7 @@ the question and its part according to the question paper.
 
     document.querySelectorAll(".review_short").forEach((e) => {
       const exist = shorts.filter((elem) => {
-        return elem.id === e.value && e.id;
+        return elem._id === e.value && e.id;
       });
       if (exist.length > 0) {
         document.getElementById(e.id).checked = true;
@@ -704,7 +753,7 @@ the question and its part according to the question paper.
   useEffect(() => {
     document.querySelectorAll(".select_long").forEach((e) => {
       const exist = longs.filter((elem) => {
-        return elem.id === e.value && e.id;
+        return elem._id === e.value && e.id;
       });
       if (exist.length > 0) {
         document.getElementById(e.id).checked = true;
@@ -715,7 +764,7 @@ the question and its part according to the question paper.
 
     document.querySelectorAll(".review_long").forEach((e) => {
       const exist = longs.filter((elem) => {
-        return elem.id === e.value && e.id;
+        return elem._id === e.value && e.id;
       });
       if (exist.length > 0) {
         document.getElementById(e.id).checked = true;
@@ -771,7 +820,7 @@ the question and its part according to the question paper.
       }
     );
 
-    FetchQuestions(clas, editmcq.chapter, subject);
+    FetchQuestions(clas, editmcq?.chapter, subject);
 
     if (tab === "short") {
       setTab("short");
@@ -809,6 +858,7 @@ the question and its part according to the question paper.
             className="d-block btn btn-secondary ms-3 options_btn"
             data-bs-toggle="modal"
             data-bs-target="#reviewModal"
+            onClick={() => setMcq2(Mcq)}
           >
             Review
           </button>
@@ -830,13 +880,13 @@ the question and its part according to the question paper.
               >
                 Preview
               </button>
-              <button
+              {/* <button
                 className="d-block btn btn-secondary ms-3 options_btn"
                 data-bs-toggle="modal"
                 data-bs-target="#reviewModal"
               >
                 Review
-              </button>
+              </button> */}
             </>
           )}
         </div>
@@ -1132,7 +1182,7 @@ the question and its part according to the question paper.
                 <div
                   type="button"
                   className="d-flex justify-content-between align-items-center chapter px-3 py-2 bg-gray fs-5 rounded mt-2"
-                  key={i + 10}
+                  key={elem}
                   onClick={() => FetchQuestions(clas, elem, subject)}
                 >
                   Chapter {i + 1} : {elem}
@@ -1202,7 +1252,7 @@ the question and its part according to the question paper.
               ? subdata.map((elem, i) => {
                   return (
                     <div
-                      key={i + 100}
+                      key={elem._id}
                       className="d-flex align-items-start mt-3"
                     >
                       <input
@@ -1222,7 +1272,7 @@ the question and its part according to the question paper.
                             elem.options.map((e, index) => {
                               const sno = ["a", "b", "c", "d"];
                               return (
-                                <p className="mt-1 fs-5 w-50" key={i + 1000}>
+                                <p className="mt-1 fs-5 w-50" key={e}>
                                   <span className="fs-6 fw-bold text-muted">
                                     {sno[index]}.
                                   </span>{" "}
@@ -1288,14 +1338,18 @@ the question and its part according to the question paper.
                   setEditMcq((prev) => ({ ...prev, qno: e.target.value }))
                 }
               />
-              {tab === "mcq" && (
+              {tab === "mcq" && editmcq.options && (
                 <>
                   <div className="d-flex mt-3">
                     <input
                       className="mt-1"
                       type="radio"
                       name="option"
-                      onChange={(e) => e.target.checked && setCorrect(1)}
+                      onChange={(e) =>
+                        e.target.checked &&
+                        setEditMcq((prev) => ({ ...prev, correct_answer: "1" }))
+                      }
+                      checked={editmcq?.correct_answer === "1"}
                     />
                     <input
                       type="text"
@@ -1303,6 +1357,18 @@ the question and its part according to the question paper.
                       className="py-1 form-control ms-3"
                       placeholder="Option 1"
                       id="option1"
+                      value={editmcq?.options[0]}
+                      onChange={(e) =>
+                        setEditMcq((prev) => ({
+                          ...prev,
+                          options: [
+                            e.target.value,
+                            editmcq?.options[1],
+                            editmcq?.options[2],
+                            editmcq?.options[3],
+                          ],
+                        }))
+                      }
                     />
                   </div>
                   <div className="d-flex mt-3">
@@ -1310,14 +1376,30 @@ the question and its part according to the question paper.
                       className="mt-1"
                       type="radio"
                       name="option"
-                      onChange={(e) => e.target.checked && setCorrect(2)}
+                      onChange={(e) =>
+                        e.target.checked &&
+                        setEditMcq((prev) => ({ ...prev, correct_answer: "2" }))
+                      }
+                      checked={editmcq?.correct_answer === "2"}
                     />
                     <input
                       type="text"
                       contentEditable={true}
                       className="py-1 form-control ms-3"
                       placeholder="Option 2"
+                      value={editmcq?.options[1]}
                       id="option2"
+                      onChange={(e) =>
+                        setEditMcq((prev) => ({
+                          ...prev,
+                          options: [
+                            editmcq?.options[0],
+                            e.target.value,
+                            editmcq?.options[2],
+                            editmcq?.options[3],
+                          ],
+                        }))
+                      }
                     />
                   </div>
                   <div className="d-flex mt-2">
@@ -1325,7 +1407,11 @@ the question and its part according to the question paper.
                       className="mt-1"
                       type="radio"
                       name="option"
-                      onChange={(e) => e.target.checked && setCorrect(3)}
+                      onChange={(e) =>
+                        e.target.checked &&
+                        setEditMcq((prev) => ({ ...prev, correct_answer: "3" }))
+                      }
+                      checked={editmcq?.correct_answer === "3"}
                     />
                     <input
                       type="text"
@@ -1333,6 +1419,18 @@ the question and its part according to the question paper.
                       className="py-1 form-control ms-3"
                       placeholder="Option 3"
                       id="option3"
+                      value={editmcq?.options[2]}
+                      onChange={(e) =>
+                        setEditMcq((prev) => ({
+                          ...prev,
+                          options: [
+                            editmcq?.options[0],
+                            editmcq?.options[1],
+                            e.target.value,
+                            editmcq?.options[3],
+                          ],
+                        }))
+                      }
                     />
                   </div>
                   <div className="d-flex mt-2">
@@ -1340,14 +1438,30 @@ the question and its part according to the question paper.
                       className="mt-1"
                       type="radio"
                       name="option"
-                      onChange={(e) => e.target.checked && setCorrect(4)}
+                      onChange={(e) =>
+                        e.target.checked &&
+                        setEditMcq((prev) => ({ ...prev, correct_answer: "4" }))
+                      }
+                      checked={editmcq?.correct_answer === "4"}
                     />
                     <input
                       type="text"
                       contentEditable={true}
                       className="py-1 form-control ms-3"
+                      value={editmcq?.options[3]}
                       placeholder="Option 4"
                       id="option4"
+                      onChange={(e) =>
+                        setEditMcq((prev) => ({
+                          ...prev,
+                          options: [
+                            editmcq?.options[0],
+                            editmcq?.options[1],
+                            editmcq?.options[2],
+                            e.target.value,
+                          ],
+                        }))
+                      }
                     />
                   </div>
                 </>
@@ -1422,21 +1536,22 @@ the question and its part according to the question paper.
                 className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                id="reviewclose"
               ></button>
             </div>
             <div className="modal-body">
               <div style={{ height: "65vh", overflowY: "scroll" }}>
-                {subdata.length > 0
-                  ? subdata.map((elem, i) => {
+                {Mcq.length > 0
+                  ? Mcq.map((elem, i) => {
                       return (
                         <div
-                          key={i + 10000}
+                          key={elem._id}
                           className="d-flex align-items-start mt-3"
                         >
                           <input
                             type="checkbox"
                             className={`large-checkbox me-3 mt-1 review_${tab}`}
-                            onChange={(e) => AddQno(elem, e)}
+                            onChange={(e) => AddQno2(elem, e)}
                             id={`R${tab}${i + 1}`}
                             value={elem._id}
                           />
@@ -1450,7 +1565,7 @@ the question and its part according to the question paper.
                                 elem.options.map((e, index) => {
                                   const sno = ["a", "b", "c", "d"];
                                   return (
-                                    <p className="mt-1 fs-5 w-50" key={i + 100000}>
+                                    <p className="mt-1 fs-5 w-50" key={e + "1"}>
                                       <span className="fs-6 fw-bold text-muted">
                                         {sno[index]}.
                                       </span>{" "}
@@ -1474,8 +1589,15 @@ the question and its part according to the question paper.
               >
                 Close
               </button>
-              <button type="button" className="btn btn-primary">
-                Save changes
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  setMCQs(Mcq2);
+                  document.getElementById("reviewclose").click();
+                }}
+              >
+                Update
               </button>
             </div>
           </div>
