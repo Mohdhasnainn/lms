@@ -13,11 +13,11 @@ router.get("/chapters", verifyToken, async (req, res) => {
   res.json({ data: chapters });
 });
 
-router.get("/findqno", verifyToken, async (req, res) => {
+router.post("/findqno", verifyToken, async (req, res) => {
   const questions = await QuestionModel.find({
     class: req.query.class,
     subject: req.query.subject,
-    chapter: req.query.chapter,
+    chapter: req.body.chapter,
   });
 
   res.json({ data: questions });

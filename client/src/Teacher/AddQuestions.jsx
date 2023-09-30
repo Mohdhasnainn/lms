@@ -126,9 +126,6 @@ const AddQuestions = () => {
     }
   }, []);
 
-
-  console.log(chapters.chapters);
-
   if (!user || userdata.role !== "Teacher") return <Navigate to={"/"} />;
 
   return (

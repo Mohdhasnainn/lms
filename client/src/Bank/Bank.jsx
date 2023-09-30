@@ -43,11 +43,12 @@ const Bank = () => {
   };
 
   const FetchQuestions = async (cls, chp, subj) => {
-    const { data } = await axios.get(
+    const { data } = await axios.post(
       import.meta.env.VITE_URL +
-        `/api/bank/findqno?class=${cls}&subject=${subj
-          .toUpperCase()
-          .trim()}&chapter=${chp}`,
+        `/api/bank/findqno?class=${cls}&subject=${subj.toUpperCase().trim()}`,
+      {
+        chapter: chp,
+      },
       {
         headers: {
           "Content-Type": "application/json",
@@ -712,8 +713,6 @@ the question and its part according to the question paper.
       const exist = Mcq2.filter((elem) => {
         return elem._id === e.value;
       });
-
-      console.log(exist);
 
       if (exist.length > 0) {
         document.getElementById(e.id).checked = true;
