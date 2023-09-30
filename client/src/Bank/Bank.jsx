@@ -20,8 +20,11 @@ const Bank = () => {
   const [subject, setsubject] = useState(userdata.subject);
   const [Mcq, setMCQs] = useState([]);
   const [Mcq2, setMcq2] = useState([]);
+  const [RMcq, setRMCQ] = useState([]);
   const [shorts, setShorts] = useState([]);
+  const [fshorts, setFShorts] = useState([]);
   const [longs, setLongs] = useState([]);
+  const [flongs, setFLongs] = useState([]);
   const [pdfDataUri, setPdfDataUri] = useState(null);
   const [editmcq, setEditMcq] = useState("");
 
@@ -104,7 +107,7 @@ const Bank = () => {
           ...prevDataArray,
           { qno: qno.qno, options: qno.options, _id: qno._id },
         ]);
-        setMcq2((prevDataArray) => [
+        setRMCQ((prevDataArray) => [
           ...prevDataArray,
           { qno: qno.qno, options: qno.options, _id: qno._id },
         ]);
@@ -112,7 +115,7 @@ const Bank = () => {
         const filtered = Mcq.filter((elem) => {
           return elem._id !== qno._id;
         });
-        setMcq2(filtered);
+        setRMCQ(filtered);
         setMCQs(filtered);
       }
     } else if (tab === "short") {
@@ -145,7 +148,7 @@ const Bank = () => {
   const AddQno2 = async (qno, e) => {
     if (tab === "mcq") {
       if (e.target.checked) {
-        setMcq2((prevDataArray) => [
+        setRMCQ((prevDataArray) => [
           ...prevDataArray,
           { qno: qno.qno, options: qno.options, _id: qno._id },
         ]);
@@ -153,7 +156,7 @@ const Bank = () => {
         const filtered = Mcq2.filter((elem) => {
           return elem._id !== qno._id;
         });
-        setMcq2(filtered);
+        setRMCQ(filtered);
       }
     } else if (tab === "short") {
       if (e.target.checked) {
@@ -449,12 +452,12 @@ the question and its part according to the question paper.
   };
 
   const generateMCQPDF = () => {
-    generatePDF1(true, Mcq, "A");
+    generatePDF1(true, Mcq2, "A");
     let no1 = Math.random() > 0.2 ? 0.4 : 0.6;
-    let mcq2 = Mcq.sort(() => Math.random() - no1);
+    let mcq2 = Mcq2.sort(() => Math.random() - no1);
     generatePDF1(true, mcq2, "B");
     let no2 = no1 === 0.4 ? 0.6 : 0.4;
-    let mcq3 = Mcq.sort(() => Math.random() - no2);
+    let mcq3 = Mcq2.sort(() => Math.random() - no2);
     generatePDF1(true, mcq3, "C");
   };
 
@@ -638,7 +641,7 @@ the question and its part according to the question paper.
       "Answer any 10 question from this section. Each question carries 4 marks."
     );
 
-    shorts.forEach((question, index) => {
+    fshorts.forEach((question, index) => {
       doc.setFontSize(12.5);
       doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
       yOffset = yOffset + 6.5;
@@ -681,7 +684,7 @@ the question and its part according to the question paper.
       "Answer any 2 question from this section. Each question carries 14 marks."
     );
 
-    longs.forEach((question, index) => {
+    flongs.forEach((question, index) => {
       doc.setFontSize(12.5);
       doc.text(10, yOffset + 6.5, `${index + 1}) ${question.qno}`);
       yOffset = yOffset + 6.5;
@@ -710,7 +713,7 @@ the question and its part according to the question paper.
 
   useEffect(() => {
     document.querySelectorAll(".review_mcq").forEach((e) => {
-      const exist = Mcq2.filter((elem) => {
+      const exist = RMcq.filter((elem) => {
         return elem._id === e.value;
       });
 
@@ -834,6 +837,10 @@ the question and its part according to the question paper.
     setLoading(false);
   };
 
+  const SetFinalMCQS = () => {
+    setMcq2(Mcq);
+  };
+
   return (
     <div>
       {tab === "mcq" ? (
@@ -846,7 +853,7 @@ the question and its part according to the question paper.
           </button>
           {window.matchMedia("(min-width: 1024px").matches && (
             <button
-              onClick={() => generatePDF1(false, Mcq, "A")}
+              onClick={() => generatePDF1(false, Mcq2, "A")}
               className="d-block btn btn-warning ms-3 options_btn"
               disabled={pdfDataUri ? true : false}
             >
@@ -857,7 +864,6 @@ the question and its part according to the question paper.
             className="d-block btn btn-secondary ms-3 options_btn"
             data-bs-toggle="modal"
             data-bs-target="#reviewModal"
-            onClick={() => setMcq2(Mcq)}
           >
             Review
           </button>
@@ -1246,6 +1252,36 @@ the question and its part according to the question paper.
             </div>
           </div>
 
+
+          {tab === "mcq" && (
+            <button
+              className="btn btn-success ms-auto d-block mt-3"
+              disabled={Mcq.length === Mcq2.length}
+              onClick={()=> SetFinalMCQS()}
+            >
+              Add MCQ's ({Mcq2.length})
+            </button>
+          )}
+
+          {tab === "long"  && (
+            <button
+              className="btn btn-success ms-auto d-block mt-3"
+              disabled={longs.length === flongs.length}
+              onClick={()=> setFLongs(longs)}
+            >
+              Add Longs ({flongs.length})
+            </button>
+          ) }
+          {tab  === "short" && (
+            <button
+              className="btn btn-success ms-auto d-block mt-3"
+              disabled={shorts.length === fshorts.length}
+              onClick={()=> setFShorts(shorts)}
+            >
+              Add Short ({fshorts.length})
+            </button>
+          )}
+
           <div className="w-75 mx-auto mt-5 mcq_container">
             {subdata.length > 0
               ? subdata.map((elem, i) => {
@@ -1540,8 +1576,8 @@ the question and its part according to the question paper.
             </div>
             <div className="modal-body">
               <div style={{ height: "65vh", overflowY: "scroll" }}>
-                {Mcq.length > 0
-                  ? Mcq.map((elem, i) => {
+                {Mcq2.length > 0
+                  ? Mcq2.map((elem, i) => {
                       return (
                         <div
                           key={elem._id}
@@ -1592,7 +1628,8 @@ the question and its part according to the question paper.
                 type="button"
                 className="btn btn-primary"
                 onClick={() => {
-                  setMCQs(Mcq2);
+                  setMcq2(RMcq);
+                  setMCQs(RMcq);
                   document.getElementById("reviewclose").click();
                 }}
               >
