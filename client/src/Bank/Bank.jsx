@@ -22,6 +22,7 @@ const Bank = () => {
   const [Mcq2, setMcq2] = useState([]);
   const [RMcq, setRMCQ] = useState([]);
   const [shorts, setShorts] = useState([]);
+  const [Rshorts, setRShorts] = useState([]);
   const [fshorts, setFShorts] = useState([]);
   const [longs, setLongs] = useState([]);
   const [flongs, setFLongs] = useState([]);
@@ -124,11 +125,15 @@ const Bank = () => {
           ...prevDataArray,
           { qno: qno.qno, _id: qno._id },
         ]);
+        setRShorts((prevDataArray) => [
+          ...prevDataArray,
+          { qno: qno.qno, _id: qno._id },
+        ]);
       } else {
         const filtered = shorts.filter((elem) => {
           return elem._id !== qno._id;
         });
-        setShorts(filtered);
+        setRShorts(filtered);
       }
     } else if (tab === "long") {
       if (e.target.checked) {
@@ -160,7 +165,7 @@ const Bank = () => {
       }
     } else if (tab === "short") {
       if (e.target.checked) {
-        setShorts((prevDataArray) => [
+        setRShorts((prevDataArray) => [
           ...prevDataArray,
           { qno: qno.qno, _id: qno._id },
         ]);
@@ -168,7 +173,7 @@ const Bank = () => {
         const filtered = shorts.filter((elem) => {
           return elem._id !== qno._id;
         });
-        setShorts(filtered);
+        setRShorts(filtered);
       }
     } else if (tab === "long") {
       if (e.target.checked) {
@@ -738,7 +743,7 @@ the question and its part according to the question paper.
     });
 
     document.querySelectorAll(".review_short").forEach((e) => {
-      const exist = shorts.filter((elem) => {
+      const exist = Rshorts.filter((elem) => {
         return elem._id === e.value && e.id;
       });
       if (exist.length > 0) {
@@ -885,13 +890,13 @@ the question and its part according to the question paper.
               >
                 Preview
               </button>
-              {/* <button
+              <button
                 className="d-block btn btn-secondary ms-3 options_btn"
                 data-bs-toggle="modal"
                 data-bs-target="#reviewModal"
               >
                 Review
-              </button> */}
+              </button>
             </>
           )}
         </div>
@@ -1252,31 +1257,30 @@ the question and its part according to the question paper.
             </div>
           </div>
 
-
           {tab === "mcq" && (
             <button
               className="btn btn-success ms-auto d-block mt-3"
               disabled={Mcq.length === Mcq2.length}
-              onClick={()=> SetFinalMCQS()}
+              onClick={() => SetFinalMCQS()}
             >
               Add MCQ's ({Mcq2.length})
             </button>
           )}
 
-          {tab === "long"  && (
+          {tab === "long" && (
             <button
               className="btn btn-success ms-auto d-block mt-3"
               disabled={longs.length === flongs.length}
-              onClick={()=> setFLongs(longs)}
+              onClick={() => setFLongs(longs)}
             >
               Add Longs ({flongs.length})
             </button>
-          ) }
-          {tab  === "short" && (
+          )}
+          {tab === "short" && (
             <button
               className="btn btn-success ms-auto d-block mt-3"
               disabled={shorts.length === fshorts.length}
-              onClick={()=> setFShorts(shorts)}
+              onClick={() => setFShorts(shorts)}
             >
               Add Short ({fshorts.length})
             </button>
@@ -1369,6 +1373,7 @@ the question and its part according to the question paper.
                 type="text"
                 id={tab}
                 value={editmcq?.qno}
+
                 onChange={(e) =>
                   setEditMcq((prev) => ({ ...prev, qno: e.target.value }))
                 }
@@ -1576,44 +1581,66 @@ the question and its part according to the question paper.
             </div>
             <div className="modal-body">
               <div style={{ height: "65vh", overflowY: "scroll" }}>
-                {Mcq2.length > 0
-                  ? Mcq2.map((elem, i) => {
-                      return (
-                        <div
-                          key={elem._id}
-                          className="d-flex align-items-start mt-3"
-                        >
-                          <input
-                            type="checkbox"
-                            className={`large-checkbox me-3 mt-1 review_${tab}`}
-                            onChange={(e) => AddQno2(elem, e)}
-                            id={`R${tab}${i + 1}`}
-                            value={elem._id}
-                          />
-                          <div style={{ width: "95%" }}>
-                            <p className="fs-5">
-                              <span className="fs-6 fw-bold"> {i + 1}.</span>{" "}
-                              {elem.qno}
-                            </p>
-                            <div className="d-flex justify-content-between mcq_options flex-wrap w-100 align-items-center">
-                              {elem?.options &&
-                                elem.options.map((e, index) => {
-                                  const sno = ["a", "b", "c", "d"];
-                                  return (
-                                    <p className="mt-1 fs-5 w-50" key={e + "1"}>
-                                      <span className="fs-6 fw-bold text-muted">
-                                        {sno[index]}.
-                                      </span>{" "}
-                                      {e}
-                                    </p>
-                                  );
-                                })}
-                            </div>
+                {tab === "mcq" &&
+                  Mcq2.length > 0 &&
+                  Mcq2.map((elem, i) => {
+                    return (
+                      <div
+                        key={elem._id}
+                        className="d-flex align-items-start mt-3"
+                      >
+                        <input
+                          type="checkbox"
+                          className={`large-checkbox me-3 mt-1 review_${tab}`}
+                          onChange={(e) => AddQno2(elem, e)}
+                          id={`R${tab}${i + 1}`}
+                          value={elem._id}
+                        />
+                        <div style={{ width: "95%" }}>
+                          <p className="fs-5">
+                            <span className="fs-6 fw-bold"> {i + 1}.</span>{" "}
+                            {elem.qno}
+                          </p>
+                          <div className="d-flex justify-content-between mcq_options flex-wrap w-100 align-items-center">
+                            {elem?.options &&
+                              elem.options.map((e, index) => {
+                                const sno = ["a", "b", "c", "d"];
+                                return (
+                                  <p className="mt-1 fs-5 w-50" key={e + "1"}>
+                                    <span className="fs-6 fw-bold text-muted">
+                                      {sno[index]}.
+                                    </span>{" "}
+                                    {e}
+                                  </p>
+                                );
+                              })}
                           </div>
                         </div>
-                      );
-                    })
-                  : "Nothing to show!"}
+                      </div>
+                    );
+                  })}
+
+                {tab === "short" &&
+                  fshorts.map((elem, i) => {
+                  return  <div
+                      key={elem._id}
+                      className="d-flex align-items-start mt-3"
+                    >
+                      <input
+                        type="checkbox"
+                        className={`large-checkbox me-3 mt-1 review_${tab}`}
+                        onChange={(e) => AddQno(elem, e)}
+                        id={`R${tab}${i + 1}`}
+                        value={elem._id}
+                      />
+                      <div style={{ width: "95%" }}>
+                        <p className="fs-5">
+                          <span className="fs-6 fw-bold"> {i + 1}.</span>{" "}
+                          {elem.qno}
+                        </p>
+                      </div>
+                    </div>;
+                  })}
               </div>
             </div>
             <div className="modal-footer">
@@ -1628,8 +1655,13 @@ the question and its part according to the question paper.
                 type="button"
                 className="btn btn-primary"
                 onClick={() => {
-                  setMcq2(RMcq);
-                  setMCQs(RMcq);
+                  if(tab === "mcq"){
+                    setMcq2(RMcq);
+                    setMCQs(RMcq);
+                  }else if(tab === "short"){
+                    setFShorts(Rshorts)
+                    setShorts(Rshorts)
+                  }
                   document.getElementById("reviewclose").click();
                 }}
               >
