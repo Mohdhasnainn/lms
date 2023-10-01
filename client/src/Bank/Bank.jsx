@@ -134,6 +134,7 @@ const Bank = () => {
           return elem._id !== qno._id;
         });
         setRShorts(filtered);
+        setShorts(filtered)
       }
     } else if (tab === "long") {
       if (e.target.checked) {
