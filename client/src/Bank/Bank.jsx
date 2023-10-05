@@ -906,7 +906,7 @@ the question and its part according to the question paper.
               <button
                 onClick={() => generatePDF2(false)}
                 className="d-block btn btn-warning ms-3 options_btn"
-                disabled={pdfDataUri ? true : false}
+                // disabled={pdfDataUri ? true : false}
               >
                 Preview
               </button>
