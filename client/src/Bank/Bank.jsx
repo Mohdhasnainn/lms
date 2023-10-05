@@ -706,6 +706,11 @@ the question and its part according to the question paper.
     } else {
       const dataUri = doc.output("datauristring"); // Get the PDF content as a data URI
       setPdfDataUri(dataUri);
+
+      if (dataUri.length > 0) {
+        document.getElementById("redirect").href = dataUri;
+        document.getElementById("redirect").click();
+      }
     }
   };
 
