@@ -5,6 +5,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { GrSelect } from "react-icons/gr";
 import { AiFillQuestionCircle, AiOutlineQuestionCircle } from "react-icons/ai";
+import readXlsxFile from "read-excel-file";
+import loader from "../assets/loading.gif";
 
 const AddQuestions = () => {
   const { user, userdata } = useAuthContext();
@@ -15,6 +17,7 @@ const AddQuestions = () => {
   const [currentChp, setChapter] = useState("");
   const [correct, setCorrect] = useState("");
   const [loading, setLoading] = useState(false);
+  const [Eloading, setELoading] = useState(false);
 
   const FETCH = async (cls) => {
     setSLoading(true);
@@ -118,6 +121,69 @@ const AddQuestions = () => {
     setLoading(false);
   };
 
+  const HandleFileUpload = async (e, element) => {
+    setELoading(true);
+    const sheet1Data = await readXlsxFile(e.target.files[0], { sheet: 1 });
+    const sheet2Data = await readXlsxFile(e.target.files[0], { sheet: 2 });
+    const sheet3Data = await readXlsxFile(e.target.files[0], { sheet: 3 });
+
+    const mcq = [];
+    let mcqsupdated = sheet1Data.splice(1);
+
+    mcqsupdated.map((elem) => {
+      return mcq.push({
+        qno: elem[0],
+        type: "mcq",
+        chapter: element,
+        options: [elem[1], elem[2], elem[3], elem[4]],
+        correct_answer: elem[5],
+        subject: userdata.subject,
+        class: clas,
+      });
+    });
+
+    const shorts = [];
+    sheet2Data.map((elem) => {
+      return shorts.push({
+        qno: elem[0],
+        type: "short",
+        chapter: element,
+        subject: userdata.subject,
+        class: clas,
+      });
+    });
+
+    const longs = [];
+    sheet3Data.map((elem) => {
+      return longs.push({
+        qno: elem[0],
+        type: "long",
+        chapter: element,
+        subject: userdata.subject,
+        class: clas,
+      });
+    });
+
+    const questions = [...mcq, ...shorts, ...longs];
+
+    await axios.post(
+      import.meta.env.VITE_URL + `/api/bank/add`,
+      {
+        documents: questions,
+        excel: true,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          token: Cookies.get("token"),
+        },
+      }
+    ).then(()=>{
+      setELoading(false);
+    })
+
+  };
+
   useEffect(() => {
     if (userdata && userdata.classs !== "Both") {
       const cls = userdata.classs.split(" ")[0];
@@ -178,7 +244,12 @@ const AddQuestions = () => {
                     key={elem}
                   >
                     Chapter {i + 1} : {elem}
-                    <div className="ms-3">
+                    <input
+                      type="file"
+                      onChange={(e) => HandleFileUpload(e, elem)}
+                      className="form-control w-25 ms-auto d-block me-3"
+                    />
+                    <div>
                       <GrSelect
                         size={23}
                         className="me-2"
@@ -408,6 +479,29 @@ const AddQuestions = () => {
           </div>
         </div>
       </div>
+      {Eloading && (
+        <div
+          style={{
+            height: "100vh",
+            width: "100%",
+            position: "fixed",
+            top: "0%",
+            left: "0%",
+            zIndex: 2000000,
+            padding: "10px 20px",
+            background: "rgba(0,0,0,0.5)",
+            backgroundBlendMode: "darken",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ background: "white" }} className="w-50 py-4 px-2 text-center">
+            <h1>Uploading...</h1>
+            <img src={loader} height={80} className="d-block mx-auto mt-3" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -13,7 +13,9 @@ function App() {
     <Router>
       <Routes>
         {user ? (
-          <Route path="*" element={<Dashboard />} />
+          <>
+            <Route path="*" element={<Dashboard />} />
+          </>
         ) : (
           <>
             <Route path="/admin" element={<AdminLogin />} />

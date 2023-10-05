@@ -24,23 +24,29 @@ router.post("/findqno", verifyToken, async (req, res) => {
 });
 
 router.post("/add", verifyToken, async (req, res) => {
-  const { qno, options, correct_answer, type, subject, chapter } = req.body;
+  const { qno, options, correct_answer, type, subject, chapter, excel, documents } =
+    req.body;
 
-  await QuestionModel.create({
-    class: req.body.class,
-    qno: qno,
-    options,
-    correct_answer,
-    type,
-    subject,
-    chapter,
-  });
+  if (excel) {
+    await QuestionModel.insertMany(documents);
+    res.json({ msg: "Succesfully added!" });
+  } else {
+    await QuestionModel.create({
+      class: req.body.class,
+      qno: qno,
+      options,
+      correct_answer,
+      type,
+      subject,
+      chapter,
+    });
+    res.json({ msg: "Succesfully added!" });
+  }
 
-  res.json({ msg: "Succesfully added!" });
 });
 
 router.put("/update", verifyToken, async (req, res) => {
-  await QuestionModel.findByIdAndUpdate(req.body._id,  req.body, { new: true });
+  await QuestionModel.findByIdAndUpdate(req.body._id, req.body, { new: true });
 
   res.json({ msg: "Succesfully updated!" });
 });

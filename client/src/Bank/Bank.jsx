@@ -6,6 +6,7 @@ import { GiFastBackwardButton } from "react-icons/gi";
 import jsPDF from "jspdf";
 import { AiFillDelete } from "react-icons/ai";
 import { MdOutlineEdit } from "react-icons/md";
+import { useNavigate } from "react-router";
 
 const Bank = () => {
   const { userdata, user } = useAuthContext();
@@ -134,7 +135,7 @@ const Bank = () => {
           return elem._id !== qno._id;
         });
         setRShorts(filtered);
-        setShorts(filtered)
+        setShorts(filtered);
       }
     } else if (tab === "long") {
       if (e.target.checked) {
@@ -454,6 +455,10 @@ the question and its part according to the question paper.
     } else {
       const dataUri = doc.output("datauristring"); // Get the PDF content as a data URI
       setPdfDataUri(dataUri);
+      if (dataUri.length > 0) {
+        document.getElementById("redirect").href = dataUri;
+        document.getElementById("redirect").click();
+      }
     }
   };
 
@@ -849,6 +854,15 @@ the question and its part according to the question paper.
 
   return (
     <div>
+      <a
+        href={pdfDataUri}
+        style={{ display: "none" }}
+        id="redirect"
+        target="_blank"
+      >
+        click
+      </a>
+
       {tab === "mcq" ? (
         <div className="d-flex justify-content-end">
           <button
@@ -861,7 +875,7 @@ the question and its part according to the question paper.
             <button
               onClick={() => generatePDF1(false, Mcq2, "A")}
               className="d-block btn btn-warning ms-3 options_btn"
-              disabled={pdfDataUri ? true : false}
+              // disabled={pdfDataUri ? true : false}
             >
               Preview
             </button>
@@ -1374,7 +1388,6 @@ the question and its part according to the question paper.
                 type="text"
                 id={tab}
                 value={editmcq?.qno}
-
                 onChange={(e) =>
                   setEditMcq((prev) => ({ ...prev, qno: e.target.value }))
                 }
@@ -1528,7 +1541,7 @@ the question and its part according to the question paper.
         </div>
       </div>
 
-      {pdfDataUri && (
+      {/* {pdfDataUri && (
         <>
           <button
             onClick={() => setPdfDataUri(null)}
@@ -1557,7 +1570,7 @@ the question and its part according to the question paper.
             frameBorder="0"
           />
         </>
-      )}
+      )} */}
 
       <div
         className="modal fade"
@@ -1623,24 +1636,26 @@ the question and its part according to the question paper.
 
                 {tab === "short" &&
                   fshorts.map((elem, i) => {
-                  return  <div
-                      key={elem._id}
-                      className="d-flex align-items-start mt-3"
-                    >
-                      <input
-                        type="checkbox"
-                        className={`large-checkbox me-3 mt-1 review_${tab}`}
-                        onChange={(e) => AddQno(elem, e)}
-                        id={`R${tab}${i + 1}`}
-                        value={elem._id}
-                      />
-                      <div style={{ width: "95%" }}>
-                        <p className="fs-5">
-                          <span className="fs-6 fw-bold"> {i + 1}.</span>{" "}
-                          {elem.qno}
-                        </p>
+                    return (
+                      <div
+                        key={elem._id}
+                        className="d-flex align-items-start mt-3"
+                      >
+                        <input
+                          type="checkbox"
+                          className={`large-checkbox me-3 mt-1 review_${tab}`}
+                          onChange={(e) => AddQno(elem, e)}
+                          id={`R${tab}${i + 1}`}
+                          value={elem._id}
+                        />
+                        <div style={{ width: "95%" }}>
+                          <p className="fs-5">
+                            <span className="fs-6 fw-bold"> {i + 1}.</span>{" "}
+                            {elem.qno}
+                          </p>
+                        </div>
                       </div>
-                    </div>;
+                    );
                   })}
               </div>
             </div>
@@ -1656,12 +1671,12 @@ the question and its part according to the question paper.
                 type="button"
                 className="btn btn-primary"
                 onClick={() => {
-                  if(tab === "mcq"){
+                  if (tab === "mcq") {
                     setMcq2(RMcq);
                     setMCQs(RMcq);
-                  }else if(tab === "short"){
-                    setFShorts(Rshorts)
-                    setShorts(Rshorts)
+                  } else if (tab === "short") {
+                    setFShorts(Rshorts);
+                    setShorts(Rshorts);
                   }
                   document.getElementById("reviewclose").click();
                 }}
