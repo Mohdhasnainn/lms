@@ -18,6 +18,34 @@ const subjectSchema = new mongoose.Schema({
   chapters: Array,
   class: String,
   subject: String,
+  mcqmarks: {
+    type: String,
+    default: "",
+  },
+  shortmarks: {
+    type: String,
+    default: "",
+  },
+  longmarks: {
+    type: String,
+    default: "",
+  },
+  shortAtt: {
+    type: Array,
+    default: "",
+  },
+  longAtt: {
+    type: Array,
+    default: "",
+  },
+  mcqTime: {
+    type: String,
+    default: "",
+  },
+  theoryTime: {
+    type: String,
+    default: "",
+  },
 });
 
 // Create models based on the schemas

@@ -5,6 +5,8 @@ import userRoute from "./Routes/auth.js";
 import dotenv from "dotenv";
 import path from "path";
 import bank from "./Routes/bank.js";
+import adminRoute from "./Routes/admin.js";
+
 
 // app
 const app = express();
@@ -14,6 +16,8 @@ dotenv.config();
 
 app.use("/api/auth/", userRoute);
 app.use("/api/bank/", bank);
+app.use("/api/admin/", adminRoute);
+
 
 app.use(express.static("client/build"));
 

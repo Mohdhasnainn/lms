@@ -51,7 +51,8 @@ h6 {
 
 .QnoSection .modal-dialog,
 #reviewModal .modal-dialog,
-#editmcqModal .modal-dialog {
+#editmcqModal .modal-dialog,
+#formatModal .modal-dialog {
   max-width: 60% !important;
 }
 
@@ -132,7 +133,8 @@ h6 {
   }
   .QnoSection .modal-dialog,
   #reviewModal .modal-dialog,
-  #editmcqModal .modal-dialog {
+  #editmcqModal .modal-dialog,
+  #formatModal .modal-dialog {
     max-width: 100% !important;
 }
  .qno_type {

@@ -5,6 +5,7 @@ import Userlist from "./Admin/Userlist";
 import AddUser from "./Admin/AddUser";
 import AddQuestions from "./Teacher/AddQuestions";
 import Bank from "./Bank/Bank";
+import Formatting from "./Admin/Formatting";
 
 const Routess = () => {
   const { userdata , user} = useAuthContext();
@@ -13,6 +14,7 @@ const Routess = () => {
     <Routes>
       {userdata?.isAdmin && <Route path="/" element={<Userlist />} />}
       {userdata?.isAdmin && <Route path="/add" element={<AddUser />} />}
+      {userdata?.isAdmin && <Route path="/format" element={<Formatting />} />}
       {userdata?.role === "Teacher" && (
         <Route
           path="/"

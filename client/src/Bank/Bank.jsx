@@ -6,8 +6,6 @@ import { GiFastBackwardButton } from "react-icons/gi";
 import jsPDF from "jspdf";
 import { AiFillDelete } from "react-icons/ai";
 import { MdOutlineEdit } from "react-icons/md";
-import { useNavigate } from "react-router";
-
 const Bank = () => {
   const { userdata, user } = useAuthContext();
   const [slide, setSlide] = useState(0);
@@ -29,6 +27,7 @@ const Bank = () => {
   const [flongs, setFLongs] = useState([]);
   const [pdfDataUri, setPdfDataUri] = useState(null);
   const [editmcq, setEditMcq] = useState("");
+  const [format, setFormat] = useState("");
 
   const FETCH = async (cls, subj) => {
     setSLoading(true);
@@ -43,7 +42,22 @@ const Bank = () => {
         },
       }
     );
+    const format = await axios.get(
+      import.meta.env.VITE_URL +
+        `/api/admin/getformat?subject=${subj
+          .toUpperCase()
+          .trim()}&class=${cls}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          token: Cookies.get("token"),
+        },
+      }
+    );
+
+    setFormat(format.data[0]);
     setChapters(data.data[0]);
+
     setSLoading(false);
   };
 
@@ -340,26 +354,26 @@ const Bank = () => {
     doc.text(
       12,
       63,
-      `Section ‘A’: It consists of ** Multiple choice questions (MCQs) and all of them are to be answered.`
+      `Section ‘A’: It consists of ${format.mcqmarks} Multiple choice questions (MCQs) and all of them are to be answered.`
     );
 
     doc.text(
       12,
       67,
-      `Section ‘B’: It comprises of ** short answer questions and all of them are to be answered.`
+      `Section ‘B’: It comprises of ${format.shortAtt[0]} short answer questions and all of them are to be answered.`
     );
 
     doc.text(
       12,
       71,
-      `Section ‘C’: It comprises of ** Descriptive answer questions and all of them are to be answered.`
+      `Section ‘C’: It comprises of ${format.longAtt[0]} Descriptive answer questions and all of them are to be answered.`
     );
 
     // Text 8
     doc.setFontSize(12); // Reset the font size
     doc.setFont("Helvetica", "bold");
-    doc.text(10, 34, `Total time: 3 HRS`);
-    doc.text(170, 34, `Max. Marks:`);
+    doc.text(10, 34, `Total time: ${format.mcqTime}`);
+    doc.text(170, 34, `Max. Marks: ${format.mcqmarks ? format.mcqmarks : ""}`);
     doc.setFontSize(16); // Reset the font size
 
     // Text 8
@@ -626,7 +640,7 @@ the question and its part according to the question paper.
 
     doc.line(startX8, lineY8, endX8, lineY8);
 
-    doc.text(175, 85, `(Marks: 40)`);
+    doc.text(175, 85, `(Marks: ${format.shortmarks ? format.shortmarks : ""})`);
 
     doc.setFontSize(13);
     doc.text(10, 90, `Note:`);
@@ -642,14 +656,18 @@ the question and its part according to the question paper.
     doc.text(
       10,
       68,
-      `This paper consisting of Short-Answer Questions (Section ‘B’) and Descriptive-Answer Questions 
-(Section ‘C’) is being given after 30 minutes. Its total duration is 2 1/2  hours only.`
+      `This paper consisting of Short-Answer Questions (Section ‘B’) and Long-Answer Questions (Section ‘C’).
+The total duration for this part is ${format.theoryTime}`
     );
 
     doc.text(
       10,
       98,
-      "Answer any 10 question from this section. Each question carries 4 marks."
+      `Answer any ${
+        format.shortAtt[0]
+      } question from this section. Each question carries ${
+        format.shortmarks / format.shortAtt[0]
+      } marks.`
     );
 
     fshorts.forEach((question, index) => {
@@ -678,7 +696,11 @@ the question and its part according to the question paper.
 
     doc.line(startXL, lineYL, endXL, lineYL);
 
-    doc.text(175, yOffset - 15, `(Marks: 28)`);
+    doc.text(
+      175,
+      yOffset - 15,
+      `(Marks: ${format.longmarks ? format.longmarks : ""})`
+    );
 
     doc.text(10, yOffset - 8, `Note:`);
 
@@ -692,7 +714,11 @@ the question and its part according to the question paper.
     doc.text(
       10,
       yOffset,
-      "Answer any 2 question from this section. Each question carries 14 marks."
+      `Answer any ${
+        format.longAtt[0]
+      } question from this section. Each question carries ${
+        format.longmarks / format.longAtt[0]
+      } marks.`
     );
 
     flongs.forEach((question, index) => {
@@ -934,6 +960,13 @@ the question and its part according to the question paper.
                   onClick={() => {
                     FETCH("9", userdata.subject);
                     setclas("9 class");
+                    setLongs([]);
+                    setShorts([]);
+                    setFLongs([]);
+                    setFShorts([]);
+                    setMCQs([]);
+                    setMcq2([]);
+                    setRMCQ([]);
                     setSlide(1);
                   }}
                 >
@@ -945,6 +978,13 @@ the question and its part according to the question paper.
                   onClick={() => {
                     FETCH("10", userdata.subject);
                     setclas("10 class");
+                    setLongs([]);
+                    setShorts([]);
+                    setFLongs([]);
+                    setFShorts([]);
+                    setMCQs([]);
+                    setMcq2([]);
+                    setRMCQ([]);
                     setSlide(1);
                   }}
                 >
@@ -961,6 +1001,13 @@ the question and its part according to the question paper.
                   type="button"
                   onClick={() => {
                     // FETCH("9");
+                    setLongs([]);
+                    setShorts([]);
+                    setFLongs([]);
+                    setFShorts([]);
+                    setMCQs([]);
+                    setMcq2([]);
+                    setRMCQ([]);
                     setclas("9 class");
                     setSlide(4);
                   }}
@@ -972,6 +1019,13 @@ the question and its part according to the question paper.
                   type="button"
                   onClick={() => {
                     // FETCH("10");
+                    setLongs([]);
+                    setShorts([]);
+                    setFLongs([]);
+                    setFShorts([]);
+                    setMCQs([]);
+                    setMcq2([]);
+                    setRMCQ([]);
                     setclas("10 class");
                     setSlide(4);
                   }}
@@ -982,6 +1036,14 @@ the question and its part according to the question paper.
             </div>
           )}
         </>
+      )}
+
+      {format && slide !== 0 && (
+        <div className="">
+          <p className="fw-bold">MCQ's: {format.mcqmarks}</p>
+          <p className="fw-bold">Shorts : {format.shortAtt ? format.shortAtt[0] : ""} / {format.shortAtt ? format.shortAtt[1] : ""}</p>
+          <p className="fw-bold">Longs : {format.longAtt ? format.longAtt[0]: ""} / {format.longAtt ? format.longAtt[1]: ""}</p>
+        </div>
       )}
 
       {slide === 4 && (

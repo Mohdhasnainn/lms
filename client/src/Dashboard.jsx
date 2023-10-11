@@ -103,6 +103,7 @@ const Dashboard = () => {
                 icon: <AiFillPlusCircle size={25} color="white" />,
                 label: "Add User",
               },
+            
               userdata?.role === "Teacher" && {
                 key: "/",
                 icon: <HiUsers size={25} color="white" />,
@@ -117,6 +118,11 @@ const Dashboard = () => {
                 key: "/qnobank",
                 icon: <AiFillBank size={22} color="white" />,
                 label: "Questions Bank",
+              },
+              user?.isAdmin && {
+                key: "/format",
+                icon: <AiFillPlusCircle size={25} color="white" />,
+                label: "Paper Formats",
               },
             ]}
           />
