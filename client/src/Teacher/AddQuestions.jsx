@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../Contexts/AuthContext";
 import { Navigate } from "react-router";
 import axios from "axios";
@@ -9,6 +9,7 @@ import readXlsxFile from "read-excel-file";
 import loader from "../assets/loading.gif";
 
 const AddQuestions = () => {
+  const numerical = useRef(); 
   const { user, userdata } = useAuthContext();
   const [clas, setclas] = useState("");
   const [slide, setSlide] = useState(0);
@@ -108,7 +109,7 @@ const AddQuestions = () => {
         class: clas,
         subject: userdata.subject,
         correct_answer: correct,
-        type: "short",
+        type: numerical.current.checked ? "numerical" : "short",
       },
       {
         headers: {
@@ -120,6 +121,7 @@ const AddQuestions = () => {
     document.getElementById("shortqno").value = "";
     setLoading(false);
   };
+
 
   const HandleFileUpload = async (e, element) => {
     setELoading(true);
@@ -166,22 +168,23 @@ const AddQuestions = () => {
 
     const questions = [...mcq, ...shorts, ...longs];
 
-    await axios.post(
-      import.meta.env.VITE_URL + `/api/bank/add`,
-      {
-        documents: questions,
-        excel: true,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          token: Cookies.get("token"),
+    await axios
+      .post(
+        import.meta.env.VITE_URL + `/api/bank/add`,
+        {
+          documents: questions,
+          excel: true,
         },
-      }
-    ).then(()=>{
-      setELoading(false);
-    })
-
+        {
+          headers: {
+            "Content-Type": "application/json",
+            token: Cookies.get("token"),
+          },
+        }
+      )
+      .then(() => {
+        setELoading(false);
+      });
   };
 
   useEffect(() => {
@@ -411,7 +414,17 @@ const AddQuestions = () => {
                 placeholder="Type question here"
                 id="shortqno"
               />
+              <div className="d-flex align-items-center mt-4">
+                <input
+                  type="checkbox"
+                  className="mb-0"
+                  style={{ border: "0px", width: "5%", height: "1.5em" }}
+                  ref={numerical}
+                />
+                <p className="ms-2">Numerical</p>
+              </div>
             </div>
+
             <div className="modal-footer">
               <button
                 type="button"
@@ -496,7 +509,10 @@ const AddQuestions = () => {
             alignItems: "center",
           }}
         >
-          <div style={{ background: "white" }} className="w-50 py-4 px-2 text-center">
+          <div
+            style={{ background: "white" }}
+            className="w-50 py-4 px-2 text-center"
+          >
             <h1>Uploading...</h1>
             <img src={loader} height={80} className="d-block mx-auto mt-3" />
           </div>

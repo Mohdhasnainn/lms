@@ -87,7 +87,13 @@ const Bank = () => {
         return elem.type === "short";
       });
       setSubdata(sdata);
-    } else {
+    } else if (tab === "numerical") {
+      const sdata = data.data.filter((elem) => {
+        return elem.type === "numerical";
+      });
+      setSubdata(sdata);
+    }
+    else {
       const sdata = data.data.filter((elem) => {
         return elem.type === "long";
       });
@@ -105,6 +111,15 @@ const Bank = () => {
   const FilterShort = () => {
     const data = questions.filter((elem) => {
       return elem.type === "short";
+    });
+    setSubdata(data);
+  };
+
+
+  
+  const FilterNumerical = () => {
+    const data = questions.filter((elem) => {
+      return elem.type === "numerical";
     });
     setSubdata(data);
   };
@@ -872,7 +887,10 @@ The total duration for this part is ${format.theoryTime}`
     } else if (tab === "long") {
       setTab("long");
       FilterLong();
-    } else {
+    } else if(tab === "numerical") {
+      setTab("numerical");
+      FilterNumerical();
+    }else {
       setTab("mcq");
       FilterMCQS();
     }
@@ -1041,8 +1059,14 @@ The total duration for this part is ${format.theoryTime}`
       {format && slide !== 0 && (
         <div className="">
           <p className="fw-bold">MCQ's: {format.mcqmarks}</p>
-          <p className="fw-bold">Shorts : {format.shortAtt ? format.shortAtt[0] : ""} / {format.shortAtt ? format.shortAtt[1] : ""}</p>
-          <p className="fw-bold">Longs : {format.longAtt ? format.longAtt[0]: ""} / {format.longAtt ? format.longAtt[1]: ""}</p>
+          <p className="fw-bold">
+            Shorts : {format.shortAtt ? format.shortAtt[0] : ""} /{" "}
+            {format.shortAtt ? format.shortAtt[1] : ""}
+          </p>
+          <p className="fw-bold">
+            Longs : {format.longAtt ? format.longAtt[0] : ""} /{" "}
+            {format.longAtt ? format.longAtt[1] : ""}
+          </p>
         </div>
       )}
 
@@ -1337,6 +1361,23 @@ The total duration for this part is ${format.theoryTime}`
             >
               LONG
             </div>
+            {(subject.toUpperCase() === "CHEMISTRY" ||
+              subject.toUpperCase() === "PHYSICS") && (
+                <div
+                  className="class_card rounded qno_type border py-3 px-2 w-25 fs-5  text-center ms-3"
+                  type="button"
+                  onClick={() => {
+                    setTab("numerical");
+                    FilterNumerical();
+                  }}
+                  style={{
+                    background: tab === "numerical" && "#1677ff",
+                    color: tab === "numerical" && "white",
+                  }}
+                >
+                  Numericals
+                </div>
+              )}
           </div>
 
           {tab === "mcq" && (
