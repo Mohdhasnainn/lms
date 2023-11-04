@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../Contexts/AuthContext";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -6,6 +6,7 @@ import { GiFastBackwardButton } from "react-icons/gi";
 import jsPDF from "jspdf";
 import { AiFillDelete } from "react-icons/ai";
 import { MdOutlineEdit } from "react-icons/md";
+
 const Bank = () => {
   const { userdata, user } = useAuthContext();
   const [slide, setSlide] = useState(0);
@@ -66,7 +67,7 @@ const Bank = () => {
       import.meta.env.VITE_URL +
         `/api/bank/findqno?class=${cls}&subject=${subj.toUpperCase().trim()}`,
       {
-        chapter: chp,
+        chapter: chp.trim(),
       },
       {
         headers: {

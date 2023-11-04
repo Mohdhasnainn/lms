@@ -23,9 +23,23 @@ router.post("/findqno", verifyToken, async (req, res) => {
   res.json({ data: questions });
 });
 
+router.post("/deletesubject", async (req, res) => {
+  await QuestionModel.deleteMany({ class: "10 class", subject: "pst" });
+
+  res.json({ msg: "successfull!" });
+});
+
 router.post("/add", verifyToken, async (req, res) => {
-  const { qno, options, correct_answer, type, subject, chapter, excel, documents } =
-    req.body;
+  const {
+    qno,
+    options,
+    correct_answer,
+    type,
+    subject,
+    chapter,
+    excel,
+    documents,
+  } = req.body;
 
   if (excel) {
     await QuestionModel.insertMany(documents);
@@ -42,7 +56,6 @@ router.post("/add", verifyToken, async (req, res) => {
     });
     res.json({ msg: "Succesfully added!" });
   }
-
 });
 
 router.put("/update", verifyToken, async (req, res) => {

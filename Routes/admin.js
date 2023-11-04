@@ -1,5 +1,5 @@
 import express from "express";
-import { SubjectModel } from "../Models/Question.js";
+import { QuestionModel, SubjectModel } from "../Models/Question.js";
 
 import { verifyToken, verifyTokenAndAdmin } from "../Middlewares/verifyUser.js";
 
@@ -20,6 +20,7 @@ router.get("/subjects", verifyTokenAndAdmin, async (req, res) => {
 
   res.json({ data: subjects });
 });
+
 
 router.get("/getformat", verifyToken, async (req, res) => {
   const format = await SubjectModel.find({
