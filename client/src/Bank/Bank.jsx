@@ -93,8 +93,7 @@ const Bank = () => {
         return elem.type === "numerical";
       });
       setSubdata(sdata);
-    }
-    else {
+    } else {
       const sdata = data.data.filter((elem) => {
         return elem.type === "long";
       });
@@ -116,8 +115,6 @@ const Bank = () => {
     setSubdata(data);
   };
 
-
-  
   const FilterNumerical = () => {
     const data = questions.filter((elem) => {
       return elem.type === "numerical";
@@ -448,21 +445,22 @@ the question and its part according to the question paper.
       `1. Choose the correct answer for each question from the given options: - `
     );
 
-    question.forEach((question, index) => {
+    question.forEach((qno, index) => {
       doc.setFont("Helvetica", "bold");
       doc.setFontSize(14);
-
-      doc.text(175, 65, `Code “${code}”`);
+      if (index === 1) {
+        doc.text(175, 65, `Code “${code}”`);
+      }
       doc.setFontSize(12.5);
       doc.setFont("times", "normal");
-      doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
+      doc.text(10, yOffset, `${index + 1}) ${qno.qno}`);
 
       let optionXOffset = 10;
       let optionYOffset = yOffset + 6.4;
 
       const optionLabels = ["a", "b", "c", "d"];
 
-      question.options.forEach((option, optionIndex) => {
+      qno.options.forEach((option, optionIndex) => {
         doc.text(
           optionXOffset,
           optionYOffset,
@@ -477,7 +475,12 @@ the question and its part according to the question paper.
         }
       });
 
-      yOffset = optionYOffset + 2;
+      if (yOffset >= 270) {
+        doc.addPage(); // Add a new page if the yOffset exceeds 270 (adjust as needed)
+        yOffset = 6; // Reset yOffset for the new page
+      } else {
+        yOffset = optionYOffset + 2;
+      }
     });
 
     if (download) {
@@ -689,7 +692,11 @@ The total duration for this part is ${format.theoryTime}`
     fshorts.forEach((question, index) => {
       doc.setFontSize(12.5);
       doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
-      yOffset = yOffset + 6.5;
+      if (question.qno.split("\n").length >= 2) {
+        yOffset = yOffset + 6.5 * (question.qno.split("\n").length);
+      }else{ 
+        yOffset = yOffset + 6.5;
+      }
     });
 
     doc.setFontSize(14);
@@ -888,10 +895,10 @@ The total duration for this part is ${format.theoryTime}`
     } else if (tab === "long") {
       setTab("long");
       FilterLong();
-    } else if(tab === "numerical") {
+    } else if (tab === "numerical") {
       setTab("numerical");
       FilterNumerical();
-    }else {
+    } else {
       setTab("mcq");
       FilterMCQS();
     }
@@ -1364,21 +1371,21 @@ The total duration for this part is ${format.theoryTime}`
             </div>
             {(subject.toUpperCase() === "CHEMISTRY" ||
               subject.toUpperCase() === "PHYSICS") && (
-                <div
-                  className="class_card rounded qno_type border py-3 px-2 w-25 fs-5  text-center ms-3"
-                  type="button"
-                  onClick={() => {
-                    setTab("numerical");
-                    FilterNumerical();
-                  }}
-                  style={{
-                    background: tab === "numerical" && "#1677ff",
-                    color: tab === "numerical" && "white",
-                  }}
-                >
-                  Numericals
-                </div>
-              )}
+              <div
+                className="class_card rounded qno_type border py-3 px-2 w-25 fs-5  text-center ms-3"
+                type="button"
+                onClick={() => {
+                  setTab("numerical");
+                  FilterNumerical();
+                }}
+                style={{
+                  background: tab === "numerical" && "#1677ff",
+                  color: tab === "numerical" && "white",
+                }}
+              >
+                Numericals
+              </div>
+            )}
           </div>
 
           {tab === "mcq" && (
