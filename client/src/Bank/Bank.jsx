@@ -222,7 +222,7 @@ const Bank = () => {
   const generatePDF1 = (download, question, code) => {
     const doc = new jsPDF();
     let yOffset = 135;
-    const columnWidth = doc.internal.pageSize.width / 2 - 20;
+    const columnWidth = doc.internal.pageSize.width / 2 - 20; // Divide the page into two columns
 
     const pageWidth = doc.internal.pageSize.getWidth();
     const centerX =
