@@ -296,17 +296,17 @@ const Bank = () => {
 
     // Text 4
     const CenterX4 =
-      (pageWidth - doc.getTextWidth(`${subject.toUpperCase()} (THEORY)`)) / 2;
+      (pageWidth - doc.getTextWidth(`${subject.toUpperCase()} (MCQ's)`)) / 2;
 
     doc.text(
-      CenterX4 + Math.abs(CenterX4 - CenterX3),
+      CenterX4 + Math.abs(CenterX4 - CenterX3) + 9,
       34,
-      `${subject.toUpperCase()} (THEORY)`
+      `${subject.toUpperCase()} (MCQ's)`
     );
 
-    const startX4 = CenterX4 + Math.abs(CenterX4 - CenterX3);
+    const startX4 = CenterX4 + Math.abs(CenterX4 - CenterX3) + 9;
     const endX4 =
-      startX4 + doc.getTextWidth(`${subject.toUpperCase()} (THEORY)`);
+      startX4 + doc.getTextWidth(`${subject.toUpperCase()} (MCQ's)`);
     const lineY4 = 34 + 2;
 
     doc.line(startX4, lineY4, endX4, lineY4);
