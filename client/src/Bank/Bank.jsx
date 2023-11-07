@@ -24,6 +24,7 @@ const Bank = () => {
   const [shorts, setShorts] = useState([]);
   const [Rshorts, setRShorts] = useState([]);
   const [fshorts, setFShorts] = useState([]);
+  const [numericals, setNumericals] = useState([]);
   const [longs, setLongs] = useState([]);
   const [flongs, setFLongs] = useState([]);
   const [pdfDataUri, setPdfDataUri] = useState(null);
@@ -175,6 +176,18 @@ const Bank = () => {
           return elem._id !== qno._id;
         });
         setLongs(filtered);
+      }
+    }else if(tab === "numerical"){
+      if (e.target.checked) {
+        setNumericals((prevDataArray) => [
+          ...prevDataArray,
+          { qno: qno.qno, _id: qno._id },
+        ]);
+      } else {
+        const filtered = longs.filter((elem) => {
+          return elem._id !== qno._id;
+        });
+        setNumericals(filtered);
       }
     }
   };
@@ -693,9 +706,23 @@ The total duration for this part is ${format.theoryTime}`
       } marks.`
     );
 
+    let i;
     fshorts.forEach((question, index) => {
       doc.setFontSize(12.5);
       let splitT = doc.splitTextToSize(`${index + 1}) ${question.qno}`, doc.internal.pageSize.getWidth() - 30)
+      const textHeight = doc.getTextDimensions(splitT).h;
+      doc.text(10, yOffset, splitT);
+      if (question.qno.split("\n").length >= 2) {
+        yOffset = yOffset + (textHeight + 1) * (question.qno.split("\n").length);
+      }else{ 
+        yOffset = yOffset + textHeight + 1;
+      }
+      i = index+ 1;
+    });
+
+    numericals.forEach((question) => {
+      doc.setFontSize(12.5);
+      let splitT = doc.splitTextToSize(`${i}) ${question.qno}`, doc.internal.pageSize.getWidth() - 30)
       const textHeight = doc.getTextDimensions(splitT).h;
       doc.text(10, yOffset, splitT);
       if (question.qno.split("\n").length >= 2) {
