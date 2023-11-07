@@ -257,7 +257,7 @@ const Bank = () => {
     // Text 2
     doc.setFontSize(14); // Reset the font size
     const CenterX2 =
-      (pageWidth - doc.getTextWidth("BOARD OF SECONDARY EDUCATION KARACHI")) /
+      (pageWidth - doc.getTextWidth("CAVE EDUCATION CENTER")) /
       2;
 
     doc.setFont("times", "bold");
@@ -265,12 +265,12 @@ const Bank = () => {
     doc.text(
       CenterX2 + Math.abs(CenterX2 - centerX) / 2,
       18,
-      `BOARD OF SECONDARY EDUCATION KARACHI`
+      `CAVE EDUCATION CENTER`
     );
 
     const startX2 = CenterX2 + Math.abs(CenterX2 - centerX) / 2;
     const endX2 =
-      startX2 + doc.getTextWidth("BOARD OF SECONDARY EDUCATION KARACHI");
+      startX2 + doc.getTextWidth("CAVE EDUCATION CENTER");
     const lineY2 = 18 + 2;
 
     doc.line(startX2, lineY2, endX2, lineY2);
@@ -453,14 +453,18 @@ the question and its part according to the question paper.
       }
       doc.setFontSize(12.5);
       doc.setFont("times", "normal");
-      doc.text(10, yOffset, `${index + 1}) ${qno.qno}`);
+      let splitT = doc.splitTextToSize(`${index + 1}) ${qno.qno}`, doc.internal.pageSize.getWidth() - 30)
+
+      const textHeight = doc.getTextDimensions(splitT).h;
+      doc.text(10, yOffset, splitT);
+
 
       let optionXOffset = 10;
-      let optionYOffset = yOffset + 6.4;
+      let optionYOffset = yOffset + textHeight + 1;
 
       const optionLabels = ["a", "b", "c", "d"];
 
-      qno.options.forEach((option, optionIndex) => {
+      qno?.options.forEach((option, optionIndex) => {
         doc.text(
           optionXOffset,
           optionYOffset,
@@ -475,9 +479,9 @@ the question and its part according to the question paper.
         }
       });
 
-      if (yOffset >= 270) {
+      if (yOffset >= 250) {
         doc.addPage(); // Add a new page if the yOffset exceeds 270 (adjust as needed)
-        yOffset = 6; // Reset yOffset for the new page
+        yOffset = 15; // Reset yOffset for the new page
       } else {
         yOffset = optionYOffset + 2;
       }
@@ -542,7 +546,7 @@ the question and its part according to the question paper.
     // Text 2
     doc.setFontSize(14); // Reset the font size
     const CenterX2 =
-      (pageWidth - doc.getTextWidth("BOARD OF SECONDARY EDUCATION KARACHI")) /
+      (pageWidth - doc.getTextWidth("CAVE EDUCATION CENTER")) /
       2;
 
     doc.setFont("times", "bold");
@@ -550,12 +554,12 @@ the question and its part according to the question paper.
     doc.text(
       CenterX2 + Math.abs(CenterX2 - centerX) / 2,
       18,
-      `BOARD OF SECONDARY EDUCATION KARACHI`
+      `CAVE EDUCATION CENTER`
     );
 
     const startX2 = CenterX2 + Math.abs(CenterX2 - centerX) / 2;
     const endX2 =
-      startX2 + doc.getTextWidth("BOARD OF SECONDARY EDUCATION KARACHI");
+      startX2 + doc.getTextWidth("CAVE EDUCATION CENTER");
     const lineY2 = 18 + 2;
 
     doc.line(startX2, lineY2, endX2, lineY2);
@@ -691,11 +695,13 @@ The total duration for this part is ${format.theoryTime}`
 
     fshorts.forEach((question, index) => {
       doc.setFontSize(12.5);
-      doc.text(10, yOffset, `${index + 1}) ${question.qno}`);
+      let splitT = doc.splitTextToSize(`${index + 1}) ${question.qno}`, doc.internal.pageSize.getWidth() - 30)
+      const textHeight = doc.getTextDimensions(splitT).h;
+      doc.text(10, yOffset, splitT);
       if (question.qno.split("\n").length >= 2) {
-        yOffset = yOffset + 6.5 * (question.qno.split("\n").length);
+        yOffset = yOffset + (textHeight + 1) * (question.qno.split("\n").length);
       }else{ 
-        yOffset = yOffset + 6.5;
+        yOffset = yOffset + textHeight + 1;
       }
     });
 
@@ -746,8 +752,10 @@ The total duration for this part is ${format.theoryTime}`
 
     flongs.forEach((question, index) => {
       doc.setFontSize(12.5);
-      doc.text(10, yOffset + 6.5, `${index + 1}) ${question.qno}`);
-      yOffset = yOffset + 6.5;
+      let splitT = doc.splitTextToSize(`${index + 1}) ${question.qno}`, doc.internal.pageSize.getWidth() - 30)
+      const textHeight = doc.getTextDimensions(splitT).h;
+      doc.text(10, yOffset + 6.5, splitT);
+      yOffset = yOffset + textHeight + 1;
     });
 
     if (download) {
